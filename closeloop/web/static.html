@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CloseLoop · Exception Desk</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c232c; --line:#2a323d;
+    --fg:#e6edf3; --mut:#8b98a5; --acc:#3fb27f; --warn:#e3b341; --bad:#f85149; --info:#58a6ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
+  h1{margin:0;font-size:18px;letter-spacing:.2px}
+  h1 span{color:var(--acc)}
+  .sub{color:var(--mut);font-size:12.5px;margin-top:4px}
+  main{padding:20px 24px;max-width:1240px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kpi .v{font-size:21px;font-weight:650}
+  .kpi .l{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px}
+  .tabs{display:flex;gap:6px;margin:14px 0 12px;flex-wrap:wrap}
+  .tab{background:var(--panel);border:1px solid var(--line);color:var(--mut);
+       padding:7px 13px;border-radius:999px;cursor:pointer;font-size:13px}
+  .tab.on{color:var(--fg);border-color:var(--acc);background:#12241c}
+  .row{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  .row .head{display:flex;gap:14px;align-items:center;padding:12px 14px;cursor:pointer;flex-wrap:wrap}
+  .row .head:hover{background:var(--panel2)}
+  .amt{font-variant-numeric:tabular-nums;font-weight:650;min-width:110px;text-align:right}
+  .amt.neg{color:#ff9c94}.amt.pos{color:#7ee2b8}
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+  .pill.cat{color:#c9d1d9;border-color:#30475e;background:#132030}
+  .pill.dup{background:#2b2410;border-color:#5c4a12;color:var(--warn)}
+  .pill.fee{background:#10241c;border-color:#1c5138;color:#68d3a4}
+  .pill.fx{background:#101f2e;border-color:#1c3f5c;color:#79c0ff}
+  .pill.timing{background:#241d2e;border-color:#4a3a5c;color:#d2a8ff}
+  .pill.fraud_suspect{background:#2e1416;border-color:#6e2429;color:#ff9c94}
+  .pill.missing_entry{background:#1b2530;border-color:#2f4459;color:#a5d6ff}
+  .pill.unknown{background:#2a2a2a;border-color:#4a4a4a;color:#d0d0d0}
+  .conf{font-size:11.5px;color:var(--mut)}
+  .bar{height:4px;background:#232b35;border-radius:3px;width:64px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--acc)}
+  .body{padding:0 14px 14px;border-top:1px solid var(--line);display:none}
+  .row.open .body{display:block}
+  .desc{color:var(--mut);flex:1;min-width:220px}
+  .why{background:var(--panel2);border-left:3px solid var(--info);padding:9px 12px;border-radius:6px;margin:12px 0}
+  .why b{color:var(--info)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:550;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px}
+  td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .ev{font-size:12.5px;color:var(--mut);margin:6px 0}
+  .ev code{color:#c9d1d9;background:#11161d;padding:1px 5px;border-radius:4px}
+  .crit{font-size:12.5px;margin:8px 0;padding:8px 10px;border-radius:6px;border:1px solid var(--line)}
+  .crit.PASS{border-color:#1c5138;background:#10241c}
+  .crit.ESCALATE{border-color:#5c4a12;background:#2b2410}
+  .crit.FAIL{border-color:#6e2429;background:#2e1416}
+  .acts{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  button{font:inherit;border-radius:8px;border:1px solid var(--line);background:var(--panel2);
+         color:var(--fg);padding:7px 13px;cursor:pointer}
+  button:hover{border-color:var(--acc)}
+  button.ok{background:#12331f;border-color:#1c5138;color:#7ee2b8}
+  button.no{background:#331416;border-color:#6e2429;color:#ff9c94}
+  select,input[type=text]{font:inherit;background:#11161d;color:var(--fg);border:1px solid var(--line);
+         border-radius:8px;padding:6px 9px}
+  .done{opacity:.55}
+  .stamp{font-size:11.5px;color:var(--mut);margin-left:auto}
+  .note{color:var(--mut);font-size:12.5px;margin:6px 0 14px}
+  pre{background:#11161d;border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto;font-size:12px}
+  .flash{position:fixed;right:18px;bottom:18px;background:var(--panel2);border:1px solid var(--acc);
+         padding:10px 14px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none}
+  .flash.on{opacity:1}
+  .toolbar{display:flex;gap:8px;align-items:center;margin:10px 0 4px;flex-wrap:wrap}
+  .guard{background:#12241c;border:1px solid #1c5138;border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13px}
+  .guard b{color:#7ee2b8}
+</style>
+</head>
+<body>
+<header>
+  <h1>CloseLoop <span>·</span> autonomous bank reconciliation</h1>
+  <div class="sub" id="sub">loading…</div>
+</header>
+<main>
+  <div class="grid" id="kpis"></div>
+  <div class="guard" id="guard"></div>
+  <div class="tabs">
+    <div class="tab on" data-t="queue">Review queue</div>
+    <div class="tab" data-t="auto">Auto-resolved</div>
+    <div class="tab" data-t="matches">Matches needing sign-off</div>
+    <div class="tab" data-t="rules">Learned rules</div>
+    <div class="tab" data-t="audit">Audit trail</div>
+  </div>
+  <div class="toolbar">
+    <button id="post">Post approved entries to the GL</button>
+    <span class="note" id="postnote"></span>
+  </div>
+  <div id="view"></div>
+</main>
+<div class="flash" id="flash"></div>
+
+<script>
+const $ = (s,r=document)=>r.querySelector(s);
+const el = (t,c,h)=>{const n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n;};
+const money = n => (n<0?'-':'') + '$' + Math.abs(Number(n)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let COA = [], tab = 'queue';
+
+function flash(msg){ const f=$('#flash'); f.textContent=msg; f.classList.add('on'); setTimeout(()=>f.classList.remove('on'),2200); }
+
+async function api(path, body){
+  const opt = body ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)} : {};
+  const r = await fetch(path, opt); return r.json();
+}
+
+function kpi(v,l){ return `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`; }
+
+async function loadSummary(){
+  const s = await api('/api/summary');
+  if(!s.has_run){ $('#sub').textContent = 'No run loaded. Run: python3 closeloop.py run'; return; }
+  const m = s.metrics, p = s.policy;
+  $('#sub').innerHTML = `${s.run_id} · round ${s.round_no} · ${s.created_at} · bank <code>${esc(s.bank_file)}</code> · GL <code>${esc(s.ledger_file)}</code>`;
+  $('#kpis').innerHTML =
+    kpi(m.bank_rows, 'bank rows') +
+    kpi((m.auto_match_rate_bank*100).toFixed(1)+'%', 'auto-match rate') +
+    kpi(m.matches, 'deterministic matches') +
+    kpi(s.counts.exceptions, 'exceptions') +
+    kpi(s.counts.pending, 'awaiting you') +
+    kpi(s.counts.auto_resolved, 'auto-resolved') +
+    kpi((m.rule_hit_rate*100||0).toFixed(1)+'%', 'patterns recognised') +
+    kpi(s.counts.rules, 'rules in memory') +
+    kpi(m.llm_total_tokens.toLocaleString(), 'tokens this run');
+  $('#guard').innerHTML = `<b>Guardrails.</b> Materiality limit ${money(p.materiality_limit)} · confidence floor ${p.confidence_threshold} ·
+     auto-resolve only on an exact approved-rule signature under ${money(p.auto_resolve_cap)} ·
+     never auto-resolved: ${p.never_auto_categories.join(', ')} ·
+     unattended auto-posting <b>${p.allow_auto_post ? 'ON' : 'OFF'}</b> ·
+     never auto-posted accounts: ${p.never_auto_post_accounts.join(', ')}`;
+}
+
+function proposalTable(p){
+  if(!p) return '<div class="note">No journal entry — this resolves as a reconciling item on the report, or the critic vetoed the entry.</div>';
+  let rows = p.lines.map(l=>`<tr><td>${esc(l.account_code)} ${esc(l.account_name)}</td>
+      <td class="n">${l.debit?money(l.debit):''}</td><td class="n">${l.credit?money(l.credit):''}</td>
+      <td class="note">${esc(l.memo)}</td></tr>`).join('');
+  return `<table><thead><tr><th>Account</th><th style="text-align:right">Debit</th><th style="text-align:right">Credit</th><th>Memo</th></tr></thead>
+    <tbody>${rows}</tbody></table><div class="note">${esc(p.rationale||'')}</div>`;
+}
+
+function exceptionRow(e){
+  const cat = e.category, amt = Number(e.amount);
+  const dec = e.decision;
+  const r = el('div','row'+(dec?' done':''));
+  const c = $('#conf', r);
+  r.innerHTML = `
+    <div class="head">
+      <span class="pill cat ${esc(cat)}">${esc(cat)}</span>
+      <span class="desc">${esc(e.description)||'<i>no description</i>'} · ${esc(e.date)}</span>
+      <span class="conf">conf ${Number(e.confidence).toFixed(2)}</span>
+      <span class="bar"><i style="width:${Math.round(e.confidence*100)}%"></i></span>
+      <span class="amt ${amt<0?'neg':'pos'}">${money(amt)}</span>
+      ${dec?`<span class="stamp">${esc(dec.status)} by ${esc(dec.by)}</span>`:''}
+    </div>
+    <div class="body">
+      <div class="why"><b>Why it is here.</b> ${esc(e.evidence&&e.evidence.review_reason||'')}</div>
+      <div class="ev">${esc(e.explanation)}</div>
+      ${e.evidence&&e.evidence.critic?`<div class="crit ${esc(e.evidence.critic.verdict)}">
+          <b>Critic agent: ${esc(e.evidence.critic.verdict)}</b> — ${esc(e.evidence.critic.note||'')}
+          ${(e.evidence.critic.issues||[]).length?'<br>· '+e.evidence.critic.issues.map(esc).join('<br>· '):''}
+        </div>`:''}
+      <div class="ev">signature <code>${esc(e.evidence&&e.evidence.signature||'')}</code>
+        · account prior <code>${esc(e.evidence&&e.evidence.account_prior?e.evidence.account_prior[0]:'')}</code>
+        · vendor usual <code>${esc(e.evidence&&e.evidence.vendor_history?e.evidence.vendor_history.usual_account_code||'n/a':'n/a')}</code>
+        ${e.evidence&&e.evidence.matched?'· <b>matched to GL '+esc(e.evidence.matched_ledger)+', variance entry needed</b>':''}
+      </div>
+      ${proposalTable(e.proposal)}
+      <div class="acts">
+        <button class="ok" data-a="approve">Approve &amp; learn</button>
+        <select data-code>${COA.map(a=>`<option value="${a.code}" ${e.proposal&&e.proposal.account_code===a.code?'selected':''}>${a.code} · ${esc(a.name)}</option>`).join('')}</select>
+        <button data-a="edit">Re-code &amp; approve</button>
+        <button class="no" data-a="reject">Reject</button>
+        <span class="note">Approving stores this pattern as a rule, so the same item auto-resolves next run.</span>
+      </div>
+    </div>`;
+  $('.head', r).onclick = ()=> r.classList.toggle('open');
+  r.querySelectorAll('button[data-a]').forEach(b=>{
+    b.onclick = async ev=>{
+      ev.stopPropagation();
+      const res = await api('/api/decide', {exception_id:e.exception_id, action:b.dataset.a,
+                                            account_code: $('[data-code]', r).value});
+      if(!res.ok) return flash(res.error||'failed');
+      flash(b.dataset.a==='reject' ? 'Rejected' : (res.rule_created ? 'Approved · rule learned' : 'Approved'));
+      render();
+    };
+  });
+  return r;
+}
+
+async function renderQueue(){
+  const v = $('#view'); v.innerHTML='';
+  const all = await api('/api/exceptions?queue=1');
+  const pending = all.filter(e=>!e.decision);
+  v.appendChild(el('div','note', `${pending.length} item(s) waiting on you · ${all.length-pending.length} already decided in this run`));
+  pending.concat(all.filter(e=>e.decision)).forEach(e=>v.appendChild(exceptionRow(e)));
+}
+
+async function renderAuto(){
+  const v=$('#view'); v.innerHTML='';
+  const all = await api('/api/exceptions?queue=0');
+  const auto = all.filter(e=>e.resolution==='AUTO_RESOLVED');
+  v.appendChild(el('div','note', `${auto.length} exception(s) resolved from previously approved rules, with no human in the loop this run.`));
+  auto.forEach(e=>{ e.decision = {status:'AUTO', by:e.resolved_by}; v.appendChild(exceptionRow(e)); });
+}
+
+async function renderMatches(){
+  const v=$('#view'); v.innerHTML='';
+  const ms = await api('/api/matches?review=1');
+  v.appendChild(el('div','note', `${ms.length} deterministic match(es) the matcher deliberately flagged for a human glance: multi-line sets and FX variances.`));
+  const t = el('table'); t.innerHTML = `<thead><tr><th>Match</th><th>Type</th><th>Bank rows</th><th>GL lines</th>
+     <th style="text-align:right">Conf</th><th>Evidence</th></tr></thead><tbody></tbody>`;
+  ms.forEach(m=>{
+    const tr = el('tr');
+    tr.innerHTML = `<td>${esc(m.match_id)}</td><td><span class="pill">${esc(m.match_type)}</span></td>
+      <td>${m.bank_txn_ids.length}</td><td>${m.ledger_entry_ids.length}</td>
+      <td class="n">${Number(m.confidence).toFixed(2)}</td>
+      <td class="note">${(m.evidence||[]).map(esc).join(' · ')}</td>`;
+    t.querySelector('tbody').appendChild(tr);
+  });
+  v.appendChild(t);
+}
+
+async function renderRules(){
+  const v=$('#view'); v.innerHTML='';
+  const rs = await api('/api/rules');
+  v.appendChild(el('div','note', `${rs.length} rule(s) learned from human decisions. A rule only fires on an exact signature match, only below the amount a human actually reviewed, and never for fraud suspects.`));
+  const t = el('table'); t.innerHTML = `<thead><tr><th>Rule</th><th>Signature</th><th>Category</th><th>Account</th>
+     <th style="text-align:right">Cap</th><th style="text-align:right">Hits</th><th>Approved by</th></tr></thead><tbody></tbody>`;
+  rs.forEach(r=>{
+    const p = r.payload||{};
+    const tr = el('tr');
+    tr.innerHTML = `<td>${esc(r.rule_id)}</td><td class="note"><code>${esc(r.signature)}</code></td>
+      <td><span class="pill ${esc(p.category)}">${esc(p.category)}</span></td>
+      <td>${esc(p.account_code||'—')}</td><td class="n">${p.amount_cap!=null?money(p.amount_cap):'—'}</td>
+      <td class="n">${r.hits||0}</td><td class="note">${esc(r.created_from)}</td>`;
+    t.querySelector('tbody').appendChild(tr);
+  });
+  v.appendChild(t);
+}
+
+async function renderAudit(){
+  const v=$('#view'); v.innerHTML='';
+  const ev = await api('/api/audit?limit=120');
+  v.appendChild(el('div','note', `Last ${ev.length} audit events. Every decision — agent, rule, guardrail or human — lands here.`));
+  v.appendChild(el('pre', null, esc(ev.map(e=>
+    `${e.seq}  ${e.ts}  ${e.actor.padEnd(24)} ${e.action.padEnd(24)} ${e.entity_type.padEnd(14)} ${e.entity_id}`
+  ).join('\n'))));
+}
+
+const VIEWS = {queue:renderQueue, auto:renderAuto, matches:renderMatches, rules:renderRules, audit:renderAudit};
+async function render(){ await loadSummary(); await VIEWS[tab](); }
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+                    t.classList.add('on'); tab=t.dataset.t; VIEWS[tab](); };
+});
+$('#post').onclick = async ()=>{ const r = await api('/api/post',{});
+  $('#postnote').textContent = r.ok ? `posted ${r.posted} entries · GL has ${r.gl_entries} journal entries · 1000 balance ${money(r.bank_balance)}` : r.error;
+  render(); };
+
+(async ()=>{ COA = await api('/api/coa'); await render(); })();
+</script>
+</body>
+</html>

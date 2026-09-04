@@ -1,0 +1,1502 @@
+[
+  {
+    "bank_txn_id": "BTX-00001",
+    "expected_ledger_ids": [
+      "GL-00001"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00002",
+    "expected_ledger_ids": [
+      "GL-00002"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00003",
+    "expected_ledger_ids": [
+      "GL-00003"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00004",
+    "expected_ledger_ids": [
+      "GL-00004"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00005",
+    "expected_ledger_ids": [
+      "GL-00005"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00006",
+    "expected_ledger_ids": [
+      "GL-00006"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00007",
+    "expected_ledger_ids": [
+      "GL-00007"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00008",
+    "expected_ledger_ids": [
+      "GL-00008"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00009",
+    "expected_ledger_ids": [
+      "GL-00009"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00010",
+    "expected_ledger_ids": [
+      "GL-00010"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00011",
+    "expected_ledger_ids": [
+      "GL-00011"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00012",
+    "expected_ledger_ids": [
+      "GL-00012"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00013",
+    "expected_ledger_ids": [
+      "GL-00013"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00014",
+    "expected_ledger_ids": [
+      "GL-00014"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00015",
+    "expected_ledger_ids": [
+      "GL-00015"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00016",
+    "expected_ledger_ids": [
+      "GL-00016"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00017",
+    "expected_ledger_ids": [
+      "GL-00017"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00018",
+    "expected_ledger_ids": [
+      "GL-00018"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00019",
+    "expected_ledger_ids": [
+      "GL-00019"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00020",
+    "expected_ledger_ids": [
+      "GL-00020"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00021",
+    "expected_ledger_ids": [
+      "GL-00021"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00022",
+    "expected_ledger_ids": [
+      "GL-00022"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00023",
+    "expected_ledger_ids": [
+      "GL-00023"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00024",
+    "expected_ledger_ids": [
+      "GL-00024"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00025",
+    "expected_ledger_ids": [
+      "GL-00025"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00026",
+    "expected_ledger_ids": [
+      "GL-00026"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00027",
+    "expected_ledger_ids": [
+      "GL-00027"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00028",
+    "expected_ledger_ids": [
+      "GL-00028"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00029",
+    "expected_ledger_ids": [
+      "GL-00029"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00030",
+    "expected_ledger_ids": [
+      "GL-00030"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00031",
+    "expected_ledger_ids": [
+      "GL-00031"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00032",
+    "expected_ledger_ids": [
+      "GL-00032"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00033",
+    "expected_ledger_ids": [
+      "GL-00033"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00034",
+    "expected_ledger_ids": [
+      "GL-00034"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00035",
+    "expected_ledger_ids": [
+      "GL-00035"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00036",
+    "expected_ledger_ids": [
+      "GL-00036"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00037",
+    "expected_ledger_ids": [
+      "GL-00037"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00038",
+    "expected_ledger_ids": [
+      "GL-00038"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00039",
+    "expected_ledger_ids": [
+      "GL-00039"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00040",
+    "expected_ledger_ids": [
+      "GL-00040"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00041",
+    "expected_ledger_ids": [
+      "GL-00041"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00042",
+    "expected_ledger_ids": [
+      "GL-00042"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00043",
+    "expected_ledger_ids": [
+      "GL-00043"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00044",
+    "expected_ledger_ids": [
+      "GL-00044"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00045",
+    "expected_ledger_ids": [
+      "GL-00045"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00046",
+    "expected_ledger_ids": [
+      "GL-00046"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00047",
+    "expected_ledger_ids": [
+      "GL-00047"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00048",
+    "expected_ledger_ids": [
+      "GL-00048"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00049",
+    "expected_ledger_ids": [
+      "GL-00049"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00050",
+    "expected_ledger_ids": [
+      "GL-00050"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00051",
+    "expected_ledger_ids": [
+      "GL-00051"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00052",
+    "expected_ledger_ids": [
+      "GL-00052"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00053",
+    "expected_ledger_ids": [
+      "GL-00053"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00054",
+    "expected_ledger_ids": [
+      "GL-00054"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00055",
+    "expected_ledger_ids": [
+      "GL-00055"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00056",
+    "expected_ledger_ids": [
+      "GL-00056"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00057",
+    "expected_ledger_ids": [
+      "GL-00057"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00058",
+    "expected_ledger_ids": [
+      "GL-00058"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00059",
+    "expected_ledger_ids": [
+      "GL-00059"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00060",
+    "expected_ledger_ids": [
+      "GL-00060"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00061",
+    "expected_ledger_ids": [
+      "GL-00061"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00062",
+    "expected_ledger_ids": [
+      "GL-00062"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00063",
+    "expected_ledger_ids": [
+      "GL-00063"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00064",
+    "expected_ledger_ids": [
+      "GL-00064"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00065",
+    "expected_ledger_ids": [
+      "GL-00065"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00066",
+    "expected_ledger_ids": [
+      "GL-00066"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00067",
+    "expected_ledger_ids": [
+      "GL-00067"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00068",
+    "expected_ledger_ids": [
+      "GL-00068"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00069",
+    "expected_ledger_ids": [
+      "GL-00069"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00070",
+    "expected_ledger_ids": [
+      "GL-00070"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00071",
+    "expected_ledger_ids": [
+      "GL-00071"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00072",
+    "expected_ledger_ids": [
+      "GL-00072"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00073",
+    "expected_ledger_ids": [
+      "GL-00073"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00074",
+    "expected_ledger_ids": [
+      "GL-00074"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00075",
+    "expected_ledger_ids": [
+      "GL-00075"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00076",
+    "expected_ledger_ids": [
+      "GL-00076"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00077",
+    "expected_ledger_ids": [
+      "GL-00077"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00078",
+    "expected_ledger_ids": [
+      "GL-00078"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00079",
+    "expected_ledger_ids": [
+      "GL-00079"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00080",
+    "expected_ledger_ids": [
+      "GL-00080"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00081",
+    "expected_ledger_ids": [
+      "GL-00081"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00082",
+    "expected_ledger_ids": [
+      "GL-00082"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00083",
+    "expected_ledger_ids": [
+      "GL-00083"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00084",
+    "expected_ledger_ids": [
+      "GL-00084"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00085",
+    "expected_ledger_ids": [
+      "GL-00085"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00086",
+    "expected_ledger_ids": [
+      "GL-00086"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00087",
+    "expected_ledger_ids": [
+      "GL-00087"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00088",
+    "expected_ledger_ids": [
+      "GL-00088"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00089",
+    "expected_ledger_ids": [
+      "GL-00089"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00090",
+    "expected_ledger_ids": [
+      "GL-00090"
+    ],
+    "expected_category": "",
+    "match_type": "exact",
+    "note": "clean 1:1 match",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00091",
+    "expected_ledger_ids": [
+      "GL-00091",
+      "GL-00092",
+      "GL-00093",
+      "GL-00094"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00092",
+    "expected_ledger_ids": [
+      "GL-00095",
+      "GL-00096"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00093",
+    "expected_ledger_ids": [
+      "GL-00097",
+      "GL-00098"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00094",
+    "expected_ledger_ids": [
+      "GL-00099",
+      "GL-00100"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00095",
+    "expected_ledger_ids": [
+      "GL-00101",
+      "GL-00102"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00096",
+    "expected_ledger_ids": [
+      "GL-00103",
+      "GL-00104",
+      "GL-00105",
+      "GL-00106"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00097",
+    "expected_ledger_ids": [
+      "GL-00107",
+      "GL-00108"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00098",
+    "expected_ledger_ids": [
+      "GL-00109",
+      "GL-00110",
+      "GL-00111"
+    ],
+    "expected_category": "",
+    "match_type": "split",
+    "note": "split payment",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00099",
+    "expected_ledger_ids": [
+      "GL-00112",
+      "GL-00113",
+      "GL-00114",
+      "GL-00115",
+      "GL-00116",
+      "GL-00117",
+      "GL-00118",
+      "GL-00119"
+    ],
+    "expected_category": "",
+    "match_type": "batch",
+    "note": "processor batch settlement",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00100",
+    "expected_ledger_ids": [
+      "GL-00120",
+      "GL-00121",
+      "GL-00122",
+      "GL-00123",
+      "GL-00124",
+      "GL-00125",
+      "GL-00126",
+      "GL-00127",
+      "GL-00128"
+    ],
+    "expected_category": "",
+    "match_type": "batch",
+    "note": "processor batch settlement",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00101",
+    "expected_ledger_ids": [
+      "GL-00129",
+      "GL-00130",
+      "GL-00131",
+      "GL-00132",
+      "GL-00133",
+      "GL-00134",
+      "GL-00135",
+      "GL-00136",
+      "GL-00137",
+      "GL-00138",
+      "GL-00139"
+    ],
+    "expected_category": "",
+    "match_type": "batch",
+    "note": "processor batch settlement",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00102",
+    "expected_ledger_ids": [
+      "GL-00140",
+      "GL-00141",
+      "GL-00142",
+      "GL-00143",
+      "GL-00144",
+      "GL-00145",
+      "GL-00146",
+      "GL-00147"
+    ],
+    "expected_category": "",
+    "match_type": "batch",
+    "note": "processor batch settlement",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "outstanding cheque, ledger only: INV-15486",
+    "side": "ledger",
+    "entry_id": "GL-00148"
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "outstanding cheque, ledger only: INV-59364",
+    "side": "ledger",
+    "entry_id": "GL-00149"
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "outstanding cheque, ledger only: INV-92282",
+    "side": "ledger",
+    "entry_id": "GL-00150"
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "outstanding cheque, ledger only: INV-10434",
+    "side": "ledger",
+    "entry_id": "GL-00151"
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "outstanding cheque, ledger only: INV-75925",
+    "side": "ledger",
+    "entry_id": "GL-00152"
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "outstanding cheque, ledger only: INV-18657",
+    "side": "ledger",
+    "entry_id": "GL-00153"
+  },
+  {
+    "bank_txn_id": "BTX-00103",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "deposit in transit",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00104",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "deposit in transit",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00105",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "deposit in transit",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00106",
+    "expected_ledger_ids": [],
+    "expected_category": "timing",
+    "match_type": "none",
+    "note": "deposit in transit",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00107",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: MONTHLY SERVICE CHARGE",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00108",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: ACH RETURN FEE",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00109",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: FX CONVERSION MARKUP",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00110",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: PROCESSING FEE STRIPE",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00111",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: FX CONVERSION MARKUP",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00112",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: PROCESSING FEE STRIPE",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00113",
+    "expected_ledger_ids": [],
+    "expected_category": "fee",
+    "match_type": "none",
+    "note": "bank charge not booked: CARD MERCHANT FEE",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00114",
+    "expected_ledger_ids": [
+      "GL-00154"
+    ],
+    "expected_category": "fx",
+    "match_type": "fx",
+    "note": "FX variance -3.99",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00115",
+    "expected_ledger_ids": [
+      "GL-00155"
+    ],
+    "expected_category": "fx",
+    "match_type": "fx",
+    "note": "FX variance -23.11",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00116",
+    "expected_ledger_ids": [
+      "GL-00156"
+    ],
+    "expected_category": "fx",
+    "match_type": "fx",
+    "note": "FX variance -1.78",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00117",
+    "expected_ledger_ids": [
+      "GL-00157"
+    ],
+    "expected_category": "fx",
+    "match_type": "fx",
+    "note": "FX variance 109.64",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00118",
+    "expected_ledger_ids": [
+      "GL-00158"
+    ],
+    "expected_category": "fx",
+    "match_type": "fx",
+    "note": "FX variance -1.14",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00119",
+    "expected_ledger_ids": [
+      "GL-00159"
+    ],
+    "expected_category": "duplicate",
+    "match_type": "exact",
+    "note": "duplicate GL entry GL-00160",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "duplicate",
+    "match_type": "none",
+    "note": "duplicate ledger entry GL-00160",
+    "side": "ledger",
+    "entry_id": "GL-00160"
+  },
+  {
+    "bank_txn_id": "BTX-00120",
+    "expected_ledger_ids": [
+      "GL-00161"
+    ],
+    "expected_category": "duplicate",
+    "match_type": "exact",
+    "note": "duplicate GL entry GL-00162",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "duplicate",
+    "match_type": "none",
+    "note": "duplicate ledger entry GL-00162",
+    "side": "ledger",
+    "entry_id": "GL-00162"
+  },
+  {
+    "bank_txn_id": "BTX-00121",
+    "expected_ledger_ids": [
+      "GL-00163"
+    ],
+    "expected_category": "duplicate",
+    "match_type": "exact",
+    "note": "duplicate GL entry GL-00164",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "duplicate",
+    "match_type": "none",
+    "note": "duplicate ledger entry GL-00164",
+    "side": "ledger",
+    "entry_id": "GL-00164"
+  },
+  {
+    "bank_txn_id": "BTX-00122",
+    "expected_ledger_ids": [
+      "GL-00165"
+    ],
+    "expected_category": "duplicate",
+    "match_type": "exact",
+    "note": "duplicate GL entry GL-00166",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "",
+    "expected_ledger_ids": [],
+    "expected_category": "duplicate",
+    "match_type": "none",
+    "note": "duplicate ledger entry GL-00166",
+    "side": "ledger",
+    "entry_id": "GL-00166"
+  },
+  {
+    "bank_txn_id": "BTX-00123",
+    "expected_ledger_ids": [],
+    "expected_category": "fraud_suspect",
+    "match_type": "none",
+    "note": "unexplained debit",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00124",
+    "expected_ledger_ids": [],
+    "expected_category": "fraud_suspect",
+    "match_type": "none",
+    "note": "unexplained debit",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00125",
+    "expected_ledger_ids": [],
+    "expected_category": "missing_entry",
+    "match_type": "none",
+    "note": "unbooked bank item: REVERSAL OF ERRONEOUS DEBIT",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00126",
+    "expected_ledger_ids": [],
+    "expected_category": "missing_entry",
+    "match_type": "none",
+    "note": "unbooked bank item: REVERSAL OF ERRONEOUS DEBIT",
+    "side": "bank",
+    "entry_id": ""
+  },
+  {
+    "bank_txn_id": "BTX-00127",
+    "expected_ledger_ids": [],
+    "expected_category": "missing_entry",
+    "match_type": "none",
+    "note": "unbooked bank item: INTEREST PAID",
+    "side": "bank",
+    "entry_id": ""
+  }
+]

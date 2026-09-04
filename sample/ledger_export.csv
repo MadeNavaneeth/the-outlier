@@ -1,0 +1,167 @@
+entry_id,date,amount,account_code,account_name,description,reference,vendor
+GL-00066,2026-08-02,-548.09,6500,Travel & Meals,Delta Air Lines - INV-56371,INV-56371,Delta Air Lines
+GL-00096,2026-08-09,1822.65,4000,Product Revenue,Stripe Payouts - INV-39151,INV-39151,Stripe Payouts
+GL-00121,2026-08-02,426.18,4000,Product Revenue,Order INV-44503,INV-44503,Stripe Payouts
+GL-00017,2026-08-11,-2033.78,6500,Travel & Meals,Delta Air Lines - INV-29920,INV-29920,Delta Air Lines
+GL-00074,2026-08-25,-873.15,6500,Travel & Meals,Marriott - INV-18305,INV-18305,Marriott
+GL-00036,2026-08-03,-12400.00,6400,Rent & Facilities,WeWork - INV-37363,INV-37363,WeWork
+GL-00085,2026-08-11,-1965.45,6500,Travel & Meals,Delta Air Lines - INV-22084,INV-22084,Delta Air Lines
+GL-00117,2026-08-13,789.31,4000,Product Revenue,Order INV-97889,INV-97889,Stripe Payouts
+GL-00023,2026-08-13,-1330.42,6500,Travel & Meals,Marriott - INV-97641,INV-97641,Marriott
+GL-00043,2026-08-16,21450.18,4000,Product Revenue,Globex Industries - INV-31160,INV-31160,Globex Industries
+GL-00015,2026-08-16,-86000.00,6600,Payroll & Contractors,Gusto Payroll - INV-55020,INV-55020,Gusto Payroll
+GL-00164,2026-08-06,-1078.60,6000,Software & Subscriptions,INV-64549 (DUPLICATE ENTRY),INV-64549,
+GL-00049,2026-08-24,15365.83,4000,Product Revenue,Stripe Payouts - INV-39719,INV-39719,Stripe Payouts
+GL-00126,2026-08-02,231.28,4000,Product Revenue,Order INV-33980,INV-33980,Stripe Payouts
+GL-00099,2026-08-05,4741.29,4100,Services Revenue,Initech LLC - INV-41252,INV-41252,Initech LLC
+GL-00037,2026-08-20,-700.85,6000,Software & Subscriptions,Slack Technologies - INV-16891,INV-16891,Slack Technologies
+GL-00016,2026-08-03,31576.28,4000,Product Revenue,Acme Corp - INV-25475,INV-25475,Acme Corp
+GL-00062,2026-08-01,-4784.38,6200,Advertising & Marketing,Google Ads - INV-95154,INV-95154,Google Ads
+GL-00035,2026-08-13,-12400.00,6400,Rent & Facilities,WeWork - INV-23570,INV-23570,WeWork
+GL-00059,2026-08-01,-64.96,6000,Software & Subscriptions,Slack Technologies - INV-29811,INV-29811,Slack Technologies
+GL-00138,2026-08-17,378.04,4000,Product Revenue,Order INV-52747,INV-52747,Stripe Payouts
+GL-00156,2026-08-15,-401.99,6050,Cloud & Hosting,Snowflake FX INVOICE INV-20022,INV-20022,Snowflake
+GL-00045,2026-08-25,-1103.51,6200,Advertising & Marketing,Google Ads - INV-79220,INV-79220,Google Ads
+GL-00103,2026-08-17,3597.06,4000,Product Revenue,Globex Industries - INV-55482,INV-55482,Globex Industries
+GL-00018,2026-08-22,-2312.96,6500,Travel & Meals,Delta Air Lines - INV-20173,INV-20173,Delta Air Lines
+GL-00056,2026-08-26,-89.66,6000,Software & Subscriptions,Figma - INV-36125,INV-36125,Figma
+GL-00069,2026-08-20,-518.76,6500,Travel & Meals,Marriott - INV-10515,INV-10515,Marriott
+GL-00094,2026-08-05,11274.91,4000,Product Revenue,Globex Industries - INV-34031,INV-34031,Globex Industries
+GL-00119,2026-08-13,252.09,4000,Product Revenue,Order INV-48411,INV-48411,Stripe Payouts
+GL-00113,2026-08-13,57.19,4000,Product Revenue,Order INV-91978,INV-91978,Stripe Payouts
+GL-00080,2026-08-07,9710.91,4000,Product Revenue,Stripe Payouts - INV-97749,INV-97749,Stripe Payouts
+GL-00107,2026-08-16,7765.27,4100,Services Revenue,Initech LLC - INV-23930,INV-23930,Initech LLC
+GL-00128,2026-08-02,116.73,4000,Product Revenue,Order INV-46559,INV-46559,Stripe Payouts
+GL-00143,2026-08-05,164.11,4000,Product Revenue,Order INV-78649,INV-78649,Stripe Payouts
+GL-00163,2026-08-05,-1078.60,6000,Software & Subscriptions,Datadog - INV-64549,INV-64549,Datadog
+GL-00052,2026-08-24,-465.87,6500,Travel & Meals,Marriott - INV-55812,INV-55812,Marriott
+GL-00129,2026-08-17,216.84,4000,Product Revenue,Order INV-76156,INV-76156,Stripe Payouts
+GL-00079,2026-08-15,-2130.00,6500,Travel & Meals,Delta Air Lines - INV-51416,INV-51416,Delta Air Lines
+GL-00020,2026-08-19,10821.18,4100,Services Revenue,Initech LLC - INV-69795,INV-69795,Initech LLC
+GL-00110,2026-08-18,9893.61,4000,Product Revenue,Globex Industries - INV-40089,INV-40089,Globex Industries
+GL-00130,2026-08-17,708.68,4000,Product Revenue,Order INV-21908,INV-21908,Stripe Payouts
+GL-00075,2026-08-17,18471.90,4000,Product Revenue,Globex Industries - INV-89447,INV-89447,Globex Industries
+GL-00042,2026-08-03,-5629.32,6300,Professional Fees,Baker McKenzie - INV-28889,INV-28889,Baker McKenzie
+GL-00137,2026-08-17,607.20,4000,Product Revenue,Order INV-88192,INV-88192,Stripe Payouts
+GL-00013,2026-08-15,-833.82,6500,Travel & Meals,Marriott - INV-57393,INV-57393,Marriott
+GL-00154,2026-08-10,-197.37,6000,Software & Subscriptions,Figma FX INVOICE INV-77703,INV-77703,Figma
+GL-00104,2026-08-17,11325.43,4000,Product Revenue,Globex Industries - INV-42826,INV-42826,Globex Industries
+GL-00006,2026-08-19,-86000.00,6600,Payroll & Contractors,Gusto Payroll - INV-86748,INV-86748,Gusto Payroll
+GL-00157,2026-08-07,4217.42,4000,Product Revenue,PayPal Settlement FX INVOICE INV-19779,INV-19779,PayPal Settlement
+GL-00127,2026-08-02,45.91,4000,Product Revenue,Order INV-60020,INV-60020,Stripe Payouts
+GL-00021,2026-08-16,-388.51,6050,Cloud & Hosting,Snowflake - INV-97051,INV-97051,Snowflake
+GL-00057,2026-08-21,-467.57,6000,Software & Subscriptions,Slack Technologies - INV-53583,INV-53583,Slack Technologies
+GL-00070,2026-08-20,-678.08,6000,Software & Subscriptions,Slack Technologies - INV-25772,INV-25772,Slack Technologies
+GL-00081,2026-08-05,-95.97,6000,Software & Subscriptions,Figma - INV-94339,INV-94339,Figma
+GL-00012,2026-08-18,-839.41,6000,Software & Subscriptions,Datadog - INV-66045,INV-66045,Datadog
+GL-00133,2026-08-17,80.63,4000,Product Revenue,Order INV-12948,INV-12948,Stripe Payouts
+GL-00046,2026-08-09,-786.09,6050,Cloud & Hosting,Snowflake - INV-77947,INV-77947,Snowflake
+GL-00116,2026-08-13,117.23,4000,Product Revenue,Order INV-59922,INV-59922,Stripe Payouts
+GL-00106,2026-08-17,10453.54,4000,Product Revenue,Globex Industries - INV-82227,INV-82227,Globex Industries
+GL-00147,2026-08-05,727.26,4000,Product Revenue,Order INV-99508,INV-99508,Stripe Payouts
+GL-00158,2026-08-12,-110.70,6000,Software & Subscriptions,Notion Labs FX INVOICE INV-27380,INV-27380,Notion Labs
+GL-00002,2026-08-04,-585.96,6050,Cloud & Hosting,Snowflake - INV-57931,INV-57931,Snowflake
+GL-00073,2026-08-02,6273.94,4000,Product Revenue,Stripe Payouts - INV-22811,INV-22811,Stripe Payouts
+GL-00007,2026-08-02,-149.60,6050,Cloud & Hosting,Google Cloud Platform - INV-82963,INV-82963,Google Cloud Platform
+GL-00089,2026-08-02,-1475.10,6050,Cloud & Hosting,Snowflake - INV-33796,INV-33796,Snowflake
+GL-00139,2026-08-17,661.18,4000,Product Revenue,Order INV-74774,INV-74774,Stripe Payouts
+GL-00111,2026-08-18,5632.40,4000,Product Revenue,Globex Industries - INV-93358,INV-93358,Globex Industries
+GL-00093,2026-08-05,2504.86,4000,Product Revenue,Globex Industries - INV-17540,INV-17540,Globex Industries
+GL-00063,2026-08-05,-1101.41,6200,Advertising & Marketing,LinkedIn Ads - INV-66860,INV-66860,LinkedIn Ads
+GL-00076,2026-08-15,-597.94,6000,Software & Subscriptions,Datadog - INV-76605,INV-76605,Datadog
+GL-00024,2026-08-12,-436.40,6050,Cloud & Hosting,Amazon Web Services - INV-32026,INV-32026,Amazon Web Services
+GL-00082,2026-08-05,-249.13,6000,Software & Subscriptions,Notion Labs - INV-71307,INV-71307,Notion Labs
+GL-00014,2026-08-23,15018.50,4000,Product Revenue,Stripe Payouts - INV-41994,INV-41994,Stripe Payouts
+GL-00166,2026-08-12,-692.95,6000,Software & Subscriptions,INV-10228 (DUPLICATE ENTRY),INV-10228,
+GL-00034,2026-08-25,-315.77,6500,Travel & Meals,Marriott - INV-99204,INV-99204,Marriott
+GL-00141,2026-08-05,168.76,4000,Product Revenue,Order INV-77237,INV-77237,Stripe Payouts
+GL-00149,2026-08-28,-364.77,6050,Cloud & Hosting,Snowflake CHEQUE INV-59364,INV-59364,Snowflake
+GL-00098,2026-08-28,23874.73,4000,Product Revenue,Acme Corp - INV-64756,INV-64756,Acme Corp
+GL-00109,2026-08-18,13383.36,4000,Product Revenue,Globex Industries - INV-50341,INV-50341,Globex Industries
+GL-00153,2026-08-26,-3080.48,5000,Cost of Goods Sold,CDW CHEQUE INV-18657,INV-18657,CDW
+GL-00095,2026-08-09,6136.44,4000,Product Revenue,Stripe Payouts - INV-44151,INV-44151,Stripe Payouts
+GL-00097,2026-08-28,11983.02,4000,Product Revenue,Acme Corp - INV-54453,INV-54453,Acme Corp
+GL-00027,2026-08-18,-456.59,6000,Software & Subscriptions,Slack Technologies - INV-46416,INV-46416,Slack Technologies
+GL-00009,2026-08-22,29530.81,4000,Product Revenue,Acme Corp - INV-33688,INV-33688,Acme Corp
+GL-00144,2026-08-05,688.70,4000,Product Revenue,Order INV-84511,INV-84511,Stripe Payouts
+GL-00038,2026-08-18,-2051.49,6050,Cloud & Hosting,Amazon Web Services - INV-23299,INV-23299,Amazon Web Services
+GL-00132,2026-08-17,168.00,4000,Product Revenue,Order INV-86913,INV-86913,Stripe Payouts
+GL-00140,2026-08-05,664.15,4000,Product Revenue,Order INV-94308,INV-94308,Stripe Payouts
+GL-00051,2026-08-07,4883.47,4000,Product Revenue,PayPal Settlement - INV-89316,INV-89316,PayPal Settlement
+GL-00088,2026-08-26,-1719.44,6050,Cloud & Hosting,Snowflake - INV-39957,INV-39957,Snowflake
+GL-00047,2026-08-08,-523.90,6000,Software & Subscriptions,Slack Technologies - INV-79807,INV-79807,Slack Technologies
+GL-00105,2026-08-17,1856.32,4000,Product Revenue,Globex Industries - INV-12416,INV-12416,Globex Industries
+GL-00092,2026-08-05,7508.46,4000,Product Revenue,Globex Industries - INV-52866,INV-52866,Globex Industries
+GL-00044,2026-08-17,-3613.47,6050,Cloud & Hosting,Amazon Web Services - INV-57415,INV-57415,Amazon Web Services
+GL-00090,2026-08-28,-90.46,6000,Software & Subscriptions,Notion Labs - INV-98601,INV-98601,Notion Labs
+GL-00005,2026-08-19,-2268.77,6500,Travel & Meals,Delta Air Lines - INV-26226,INV-26226,Delta Air Lines
+GL-00124,2026-08-02,321.62,4000,Product Revenue,Order INV-14515,INV-14515,Stripe Payouts
+GL-00102,2026-08-06,3555.88,4000,Product Revenue,Stripe Payouts - INV-36983,INV-36983,Stripe Payouts
+GL-00048,2026-08-08,-2276.94,6200,Advertising & Marketing,LinkedIn Ads - INV-90377,INV-90377,LinkedIn Ads
+GL-00055,2026-08-12,-2226.41,6300,Professional Fees,Baker McKenzie - INV-94296,INV-94296,Baker McKenzie
+GL-00086,2026-08-15,-3039.93,6050,Cloud & Hosting,Amazon Web Services - INV-67731,INV-67731,Amazon Web Services
+GL-00030,2026-08-08,-255.05,6000,Software & Subscriptions,Notion Labs - INV-11581,INV-11581,Notion Labs
+GL-00145,2026-08-05,758.87,4000,Product Revenue,Order INV-12107,INV-12107,Stripe Payouts
+GL-00152,2026-08-26,-12400.00,6400,Rent & Facilities,WeWork CHEQUE INV-75925,INV-75925,WeWork
+GL-00054,2026-08-20,8961.90,4000,Product Revenue,Globex Industries - INV-89988,INV-89988,Globex Industries
+GL-00125,2026-08-02,870.65,4000,Product Revenue,Order INV-50573,INV-50573,Stripe Payouts
+GL-00087,2026-08-20,-12400.00,6400,Rent & Facilities,WeWork - INV-48725,INV-48725,WeWork
+GL-00162,2026-08-03,-1419.45,6000,Software & Subscriptions,INV-74447 (DUPLICATE ENTRY),INV-74447,
+GL-00025,2026-08-07,-295.62,6000,Software & Subscriptions,Figma - INV-47674,INV-47674,Figma
+GL-00131,2026-08-17,270.86,4000,Product Revenue,Order INV-21764,INV-21764,Stripe Payouts
+GL-00008,2026-08-18,23603.84,4000,Product Revenue,Acme Corp - INV-25439,INV-25439,Acme Corp
+GL-00159,2026-08-12,-6578.86,5000,Cost of Goods Sold,CDW - INV-40327,INV-40327,CDW
+GL-00084,2026-08-17,-271.45,6000,Software & Subscriptions,Slack Technologies - INV-62928,INV-62928,Slack Technologies
+GL-00091,2026-08-05,12751.77,4000,Product Revenue,Globex Industries - INV-84789,INV-84789,Globex Industries
+GL-00053,2026-08-08,-1547.26,6050,Cloud & Hosting,Snowflake - INV-71614,INV-71614,Snowflake
+GL-00004,2026-08-08,-1471.66,6500,Travel & Meals,Delta Air Lines - INV-21889,INV-21889,Delta Air Lines
+GL-00122,2026-08-02,356.34,4000,Product Revenue,Order INV-53113,INV-53113,Stripe Payouts
+GL-00071,2026-08-17,-1781.78,6050,Cloud & Hosting,Google Cloud Platform - INV-79563,INV-79563,Google Cloud Platform
+GL-00031,2026-08-10,-86000.00,6600,Payroll & Contractors,Gusto Payroll - INV-10536,INV-10536,Gusto Payroll
+GL-00068,2026-08-17,-171.09,6000,Software & Subscriptions,Notion Labs - INV-76918,INV-76918,Notion Labs
+GL-00061,2026-08-12,-4241.85,6300,Professional Fees,Baker McKenzie - INV-30435,INV-30435,Baker McKenzie
+GL-00032,2026-08-20,-1213.21,6500,Travel & Meals,Delta Air Lines - INV-84231,INV-84231,Delta Air Lines
+GL-00114,2026-08-13,678.46,4000,Product Revenue,Order INV-43501,INV-43501,Stripe Payouts
+GL-00108,2026-08-16,5715.88,4100,Services Revenue,Initech LLC - INV-95210,INV-95210,Initech LLC
+GL-00083,2026-08-16,-342.86,6000,Software & Subscriptions,Figma - INV-31337,INV-31337,Figma
+GL-00041,2026-08-04,9138.12,4100,Services Revenue,Initech LLC - INV-73972,INV-73972,Initech LLC
+GL-00123,2026-08-02,876.59,4000,Product Revenue,Order INV-81706,INV-81706,Stripe Payouts
+GL-00072,2026-08-04,-3225.82,6300,Professional Fees,Baker McKenzie - INV-83439,INV-83439,Baker McKenzie
+GL-00155,2026-08-18,-1031.27,6500,Travel & Meals,Marriott FX INVOICE INV-36116,INV-36116,Marriott
+GL-00148,2026-08-27,-2961.74,6200,Advertising & Marketing,LinkedIn Ads CHEQUE INV-15486,INV-15486,LinkedIn Ads
+GL-00003,2026-08-07,-316.64,6050,Cloud & Hosting,Google Cloud Platform - INV-14914,INV-14914,Google Cloud Platform
+GL-00151,2026-08-27,-2386.25,6050,Cloud & Hosting,Amazon Web Services CHEQUE INV-10434,INV-10434,Amazon Web Services
+GL-00160,2026-08-13,-6578.86,5000,Cost of Goods Sold,INV-40327 (DUPLICATE ENTRY),INV-40327,
+GL-00067,2026-08-17,-86000.00,6600,Payroll & Contractors,Gusto Payroll - INV-65132,INV-65132,Gusto Payroll
+GL-00100,2026-08-05,7791.10,4100,Services Revenue,Initech LLC - INV-31161,INV-31161,Initech LLC
+GL-00050,2026-08-24,-1820.21,6200,Advertising & Marketing,LinkedIn Ads - INV-13798,INV-13798,LinkedIn Ads
+GL-00135,2026-08-17,244.05,4000,Product Revenue,Order INV-86753,INV-86753,Stripe Payouts
+GL-00077,2026-08-08,-5437.99,6300,Professional Fees,Baker McKenzie - INV-78578,INV-78578,Baker McKenzie
+GL-00019,2026-08-27,-86000.00,6600,Payroll & Contractors,Gusto Payroll - INV-51123,INV-51123,Gusto Payroll
+GL-00026,2026-08-28,9269.52,4000,Product Revenue,Stripe Payouts - INV-75078,INV-75078,Stripe Payouts
+GL-00029,2026-08-05,-12400.00,6400,Rent & Facilities,WeWork - INV-20876,INV-20876,WeWork
+GL-00112,2026-08-13,884.51,4000,Product Revenue,Order INV-27015,INV-27015,Stripe Payouts
+GL-00165,2026-08-11,-692.95,6000,Software & Subscriptions,Slack Technologies - INV-10228,INV-10228,Slack Technologies
+GL-00065,2026-08-11,14573.36,4000,Product Revenue,Stripe Payouts - INV-43995,INV-43995,Stripe Payouts
+GL-00150,2026-08-29,-86000.00,6600,Payroll & Contractors,Gusto Payroll CHEQUE INV-92282,INV-92282,Gusto Payroll
+GL-00078,2026-08-07,-1204.05,6200,Advertising & Marketing,Google Ads - INV-68658,INV-68658,Google Ads
+GL-00010,2026-08-07,-86000.00,6600,Payroll & Contractors,Gusto Payroll - INV-58810,INV-58810,Gusto Payroll
+GL-00146,2026-08-05,751.58,4000,Product Revenue,Order INV-86554,INV-86554,Stripe Payouts
+GL-00060,2026-08-05,-469.27,6500,Travel & Meals,Marriott - INV-90160,INV-90160,Marriott
+GL-00033,2026-08-17,-126.66,6000,Software & Subscriptions,Notion Labs - INV-90949,INV-90949,Notion Labs
+GL-00001,2026-08-13,26285.26,4000,Product Revenue,Globex Industries - INV-95319,INV-95319,Globex Industries
+GL-00011,2026-08-19,-2053.08,6200,Advertising & Marketing,Google Ads - INV-17812,INV-17812,Google Ads
+GL-00142,2026-08-05,581.37,4000,Product Revenue,Order INV-76262,INV-76262,Stripe Payouts
+GL-00022,2026-08-10,-764.79,6050,Cloud & Hosting,Google Cloud Platform - INV-94820,INV-94820,Google Cloud Platform
+GL-00118,2026-08-13,875.15,4000,Product Revenue,Order INV-88483,INV-88483,Stripe Payouts
+GL-00161,2026-08-01,-1419.45,6000,Software & Subscriptions,Datadog - INV-74447,INV-74447,Datadog
+GL-00134,2026-08-17,301.20,4000,Product Revenue,Order INV-92532,INV-92532,Stripe Payouts
+GL-00039,2026-08-28,-7136.79,5000,Cost of Goods Sold,CDW - INV-37256,INV-37256,CDW
+GL-00040,2026-08-09,-12400.00,6400,Rent & Facilities,WeWork - INV-55533,INV-55533,WeWork
+GL-00058,2026-08-24,-12400.00,6400,Rent & Facilities,WeWork - INV-21130,INV-21130,WeWork
+GL-00028,2026-08-09,-481.95,6500,Travel & Meals,Delta Air Lines - INV-64433,INV-64433,Delta Air Lines
+GL-00064,2026-08-07,-1415.57,6000,Software & Subscriptions,Datadog - INV-48399,INV-48399,Datadog
+GL-00115,2026-08-13,413.28,4000,Product Revenue,Order INV-17261,INV-17261,Stripe Payouts
+GL-00120,2026-08-02,203.48,4000,Product Revenue,Order INV-45263,INV-45263,Stripe Payouts
+GL-00136,2026-08-17,863.78,4000,Product Revenue,Order INV-30349,INV-30349,Stripe Payouts
+GL-00101,2026-08-06,8469.27,4000,Product Revenue,Stripe Payouts - INV-92401,INV-92401,Stripe Payouts

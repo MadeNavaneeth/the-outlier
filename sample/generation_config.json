@@ -1,0 +1,14 @@
+{
+  "n_clean": 90,
+  "n_split": 8,
+  "n_batch": 4,
+  "n_timing_out": 6,
+  "n_timing_in": 4,
+  "n_fee": 7,
+  "n_fx": 5,
+  "n_duplicate": 4,
+  "n_fraud": 2,
+  "n_chatter": 3,
+  "seed": 7,
+  "month_start": "2026-08-01"
+}
