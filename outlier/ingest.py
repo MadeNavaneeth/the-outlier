@@ -21,6 +21,9 @@ BANK_ALIASES = {
     "txn_id": ["txn_id", "id", "transactionid", "transaction_id", "uniqueid"],
     "date": ["date", "txndate", "postingdate", "posteddate", "valuedate", "transaction date"],
     "amount": ["amount", "amt", "netamount", "transactionamount", "amount (usd)"],
+    "credit": ["credit", "credits", "deposit", "credit amount"],
+    "debit": ["debit", "debits", "withdrawal", "debit amount"],
+    "currency": ["currency", "ccy", "currency code"],
     "description": ["description", "details", "narrative", "memo", "particulars", "transaction description"],
     "reference": ["reference", "ref", "refno", "invoiceno", "invoice_no", "chequeno", "check_no"],
     "counterparty": ["counterparty", "payee", "vendor", "name", "merchant"],
@@ -31,6 +34,7 @@ LEDGER_ALIASES = {
     "entry_id": ["entry_id", "id", "txnid", "journalid", "journal_id", "unique id"],
     "date": ["date", "txndate", "postingdate", "transaction date"],
     "amount": ["amount", "amt", "netamount", "amount (usd)"],
+    "currency": ["currency", "ccy", "currency code"],
     "account_code": ["account_code", "account", "accountcode", "account code", "code"],
     "account_name": ["account_name", "account name", "accountname"],
     "description": ["description", "memo", "narrative", "details"],
@@ -68,6 +72,34 @@ def _num(value: Any) -> float:
     return money(-v if neg else v)
 
 
+def _parsed_num(value: Any) -> tuple[float, bool]:
+    """Return a number and whether a non-empty value parsed successfully."""
+    if value is None or not str(value).strip():
+        return 0.0, True
+    if isinstance(value, (int, float)):
+        return money(value), True
+    raw = str(value).strip()
+    neg = raw.startswith("(") and raw.endswith(")")
+    cleaned = re.sub(r"[(),\s]", "", raw)
+    cleaned = re.sub(r"^[A-Za-z$€£₹]+", "", cleaned)
+    try:
+        parsed = float(cleaned)
+    except ValueError:
+        return 0.0, False
+    return money(-parsed if neg else parsed), True
+
+
+def _parse_error_bank(path: Path, row_no: int, txn_id: str, reason: str) -> BankTxn:
+    return BankTxn(
+        txn_id=txn_id or f"BTX-{row_no:05d}",
+        date=parse_date("1970-01-01"),  # type: ignore[arg-type]
+        amount=0.0,
+        description=f"CSV row {row_no} could not be parsed: {reason}",
+        bank_code="PARSE_ERROR",
+        source_file=path.name,
+    )
+
+
 def read_csv(path: str | Path) -> list[dict[str, Any]]:
     p = Path(path)
     text = p.read_text(encoding="utf-8-sig", errors="replace")
@@ -101,17 +133,22 @@ def load_bank(path: str | Path) -> list[BankTxn]:
             return (vals[idx] if idx is not None and idx < len(vals) else "") or ""
 
         d = parse_date(get("date"))
-        if d is None:
-            continue  # header/junk row
-        amount = _num(get("amount"))
-        if amount == 0:
+        amount, amount_ok = _parsed_num(get("amount"))
+        if not get("amount").strip():
             # some exports split debit/credit columns
-            amount = _num(get("credit")) - _num(get("debit"))
+            credit, credit_ok = _parsed_num(get("credit"))
+            debit, debit_ok = _parsed_num(get("debit"))
+            amount = credit - debit
+            amount_ok = credit_ok and debit_ok
+        if d is None or not amount_ok:
+            out.append(_parse_error_bank(p, i + 2, get("txn_id").strip(), "invalid date" if d is None else "invalid amount"))
+            continue
         out.append(
             BankTxn(
                 txn_id=get("txn_id").strip() or f"BTX-{i + 1:05d}",
                 date=d,
                 amount=amount,
+                currency=get("currency").strip().upper() or "USD",
                 description=get("description").strip(),
                 reference=get("reference").strip(),
                 counterparty=get("counterparty").strip(),
@@ -195,15 +232,29 @@ def load_ledger(path: str | Path) -> list[LedgerEntry]:
             return (vals[idx] if idx is not None and idx < len(vals) else "") or ""
 
         d = parse_date(get("date"))
-        if d is None:
+        amount, amount_ok = _parsed_num(get("amount"))
+        if d is None or not amount_ok:
+            out.append(
+                LedgerEntry(
+                    entry_id=get("entry_id").strip() or f"GL-{i + 1:05d}",
+                    date=parse_date("1970-01-01"),  # type: ignore[arg-type]
+                    amount=0.0,
+                    account_code="2300",
+                    account_name="Suspense / Needs Review",
+                    description=f"CSV row {i + 2} could not be parsed: {'invalid date' if d is None else 'invalid amount'}",
+                    status="PARSE_ERROR",
+                    source_file=p.name,
+                )
+            )
             continue
         code = get("account_code").strip() or "6800"
         out.append(
             LedgerEntry(
                 entry_id=get("entry_id").strip() or f"GL-{i + 1:05d}",
                 date=d,
-                amount=_num(get("amount")),
+                amount=amount,
                 account_code=code,
+                currency=get("currency").strip().upper() or "USD",
                 account_name=get("account_name").strip(),
                 description=get("description").strip(),
                 reference=get("reference").strip(),

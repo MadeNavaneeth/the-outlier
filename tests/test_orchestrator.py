@@ -1,22 +1,24 @@
 """End-to-end orchestrator tests: the run, the guardrails, the learning loop."""
 
 import json
+from datetime import date
 
 import pytest
 
-from closeloop.agents.orchestrator import Orchestrator
-from closeloop.config import Policy
-from closeloop.eval import Evaluator, load_truth
-from closeloop.ingest import load_bank, load_ledger
-from closeloop.ledger import Ledger
-from closeloop.llm import MockProvider
-from closeloop.reviewer import SimulatedReviewer
-from closeloop.store import Store
+from outlier.agents.orchestrator import Orchestrator
+from outlier.config import Policy
+from outlier.eval import Evaluator, load_truth
+from outlier.ingest import load_bank, load_ledger
+from outlier.ledger import Ledger
+from outlier.llm import MockProvider
+from outlier.reviewer import SimulatedReviewer
+from outlier.store import Store
+from outlier.models import ApprovedRule, BankTxn
 
 
 @pytest.fixture
 def env(dataset, tmp_path):
-    store = Store(tmp_path / "closeloop.db")
+    store = Store(tmp_path / "outlier.db")
     truth = load_truth(dataset / "ground_truth.json")
     return {
         "store": store,
@@ -136,3 +138,49 @@ def test_run_is_persisted_and_reloaded(env):
     assert loaded is not None
     assert loaded["metrics"]["bank_rows"] == result.to_dict()["metrics"]["bank_rows"]
     assert env["store"].latest_run()["run_id"] == result.run_id
+
+
+def test_fx_proposal_uses_variance_amount_and_balances(env):
+    result = run_once(env)
+    fx = [p for p in result.to_dict()["proposals"] if p["account_code"] == "6700"]
+    assert fx
+    for proposal in fx:
+        assert proposal["amount"] != 0.0
+        assert proposal["debit_total"] == proposal["credit_total"]
+        assert max(proposal["debit_total"], proposal["credit_total"]) == abs(proposal["amount"])
+
+
+def test_learned_rule_scales_saved_lines_to_current_amount(tmp_path):
+    store = Store(tmp_path / "outlier.db")
+    rule = ApprovedRule(
+        rule_id="RULE-SCALE",
+        kind="classification",
+        signature="FEE|FEE|VENDOR",
+        payload={
+            "category": "fee",
+            "resolution": "journal_entry",
+            "account_code": "6100",
+            "approved_status": "human_approved",
+            "amount_cap": 500.0,
+            "lines": [
+                {"account_code": "6100", "account_name": "Bank Charges & Fees", "debit": 10.0, "credit": 0.0, "memo": "fee"},
+                {"account_code": "1000", "account_name": "Operating Checking", "debit": 0.0, "credit": 10.0, "memo": "fee"},
+            ],
+        },
+        created_from="human:desk",
+        exception_id="EXC-OLD",
+    )
+    store.add_rule(rule)
+    orch = Orchestrator(MockProvider(), store)
+    exc, prop = orch._apply_rule(
+        rule,
+        BankTxn("B1", date=date(2026, 8, 1), amount=-25.0, description="FEE", bank_code="FEE"),
+        None,
+        "EXC-1",
+        "PROP-1",
+        "RUN-1",
+    )
+    assert exc.resolution == "AUTO_RESOLVED"
+    assert prop is not None and prop.balanced
+    assert prop.debit_total == 25.0
+    assert prop.credit_total == 25.0

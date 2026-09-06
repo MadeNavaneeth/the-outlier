@@ -1,4 +1,4 @@
-"""Core data models for CloseLoop.
+"""Core data models for The Outlier.
 
 Sign convention (everywhere in the codebase, no exceptions):
     amount > 0  -> money INTO  the company bank account (credit / receipt)
@@ -6,7 +6,7 @@ Sign convention (everywhere in the codebase, no exceptions):
 
 Ledger entries use the same sign convention so that matching is a plain
 equality test. Journal *lines* produced for posting use classic debit/credit
-columns (debit > 0, credit > 0) -- see :mod:`closeloop.ledger`.
+columns (debit > 0, credit > 0) -- see :mod:`outlier.ledger`.
 
 Everything is a frozen-ish dataclass with ``to_dict`` so it round-trips
 through JSON, SQLite and the web API without an ORM.
@@ -108,6 +108,7 @@ class LedgerEntry:
     vendor: str = ""
     status: str = "OPEN"  # OPEN | MATCHED
     source_file: str = ""
+    currency: str = "USD"
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)

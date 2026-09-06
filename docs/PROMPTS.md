@@ -14,7 +14,7 @@ conservative default that routes the item to a human.
 plus deterministic matches that carry a variance and therefore still need a
 posting.
 
-**System prompt** (`closeloop/agents/exception_analyst.py`):
+**System prompt** (`outlier/agents/exception_analyst.py`):
 
 ```
 You are the exception analyst on an autonomous bank reconciliation.
@@ -110,7 +110,7 @@ Hard rules:
 **When called:** on every analyst output that survives the hard checks. It never
 sees the analyst's reasoning — only the claim.
 
-**System prompt** (`closeloop/agents/critic.py`):
+**System prompt** (`outlier/agents/critic.py`):
 
 ```
 You are the critic reviewer on an autonomous bank reconciliation.
@@ -155,7 +155,7 @@ Verdict merge rule: a hard `FAIL` always wins; a hard `ESCALATE` downgrades a so
 
 ## 3. Tool schemas
 
-`python3 closeloop.py tools --bank sample/bank_statement.csv --ledger sample/ledger_export.csv`
+`python3 outlier.py tools --bank sample/bank_statement.csv --ledger sample/ledger_export.csv`
 prints the OpenAI/AO-compatible spec. Summary:
 
 | Tool | Purpose | Read-only |

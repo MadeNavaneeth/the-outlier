@@ -2,20 +2,20 @@
 
 import pytest
 
-from closeloop.agents.orchestrator import Orchestrator
-from closeloop.config import Policy
-from closeloop.ledger import Ledger
-from closeloop.llm import MockProvider
-from closeloop.store import Store
-from closeloop.web.server import Api
+from outlier.agents.orchestrator import Orchestrator
+from outlier.config import Policy
+from outlier.ledger import Ledger
+from outlier.llm import MockProvider
+from outlier.store import Store
+from outlier.web.server import Api
 
 
 @pytest.fixture
 def api(dataset, tmp_path):
-    store = Store(tmp_path / "closeloop.db")
+    store = Store(tmp_path / "outlier.db")
     orch = Orchestrator(MockProvider(), store, policy=Policy())
     orch.run(dataset / "bank_statement.csv", dataset / "ledger_export.csv", run_id="RUN-UI", round_no=1)
-    return Api(tmp_path / "closeloop.db")
+    return Api(tmp_path / "outlier.db")
 
 
 def test_summary_exposes_metrics_and_policy(api):
@@ -24,6 +24,15 @@ def test_summary_exposes_metrics_and_policy(api):
     assert s["metrics"]["bank_rows"] > 0
     assert s["policy"]["allow_auto_post"] is False
     assert s["counts"]["queue"] > 0
+
+
+def test_learning_endpoint_exposes_self_reflection(api):
+    learning = api.learning()
+    assert learning["has_runs"] is True
+    assert learning["run_count"] == 1
+    assert learning["controls"]["auto_post_enabled"] is False
+    assert learning["controls"]["false_auto_posts"] == 0
+    assert learning["reflections"]
 
 
 def test_approving_creates_a_rule_that_survives(api):
@@ -72,6 +81,20 @@ def test_posting_moves_the_approved_entries_to_the_gl(api, tmp_path):
         d = sum(l["debit"] for l in je["lines"])
         c = sum(l["credit"] for l in je["lines"])
         assert round(d, 2) == round(c, 2)
+
+
+def test_posting_is_idempotent(api, tmp_path):
+    target = next(e for e in api.exceptions() if not e["decision"] and e["proposal"])
+    assert api.decide(target["exception_id"], "approve")["ok"]
+
+    first = api.post()
+    second = api.post()
+
+    assert first["posted"] == 1
+    assert second["posted"] == 0
+    assert second["skipped"] == 1
+    assert Ledger.load(tmp_path / "ledger.json").count() == 1
+    assert "post_skipped_duplicate" in [e["action"] for e in api.audit(limit=200)]
 
 
 def test_audit_trail_records_the_human_decisions(api):

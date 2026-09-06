@@ -1,8 +1,8 @@
-# CloseLoop has ZERO runtime dependencies -- the standard library is enough.
+# The Outlier has ZERO runtime dependencies -- the standard library is enough.
 #
-#   python3 closeloop.py generate --out sample
-#   python3 closeloop.py run
-#   python3 closeloop.py serve
+#   python3 outlier.py generate --out sample
+#   python3 outlier.py run
+#   python3 outlier.py serve
 #
 # all work on a bare Python 3.11+ install. Nothing below is required to run,
 # demo or evaluate the project.

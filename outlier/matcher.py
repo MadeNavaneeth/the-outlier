@@ -92,6 +92,10 @@ class Matcher:
             return True
         return False
 
+    @staticmethod
+    def _same_currency(txn: BankTxn, entry: LedgerEntry) -> bool:
+        return (txn.currency or "USD").upper() == (entry.currency or "USD").upper()
+
     # ------------------------------------------------------------------
     # PASS 1 -- exact amount inside the date window (unique pairing only)
     # ------------------------------------------------------------------
@@ -105,6 +109,7 @@ class Matcher:
                 e
                 for e in by_amount.get(money(txn.amount), [])
                 if e.entry_id in self.unmatched_ledger
+                and self._same_currency(txn, e)
                 and self._within(txn.date, e.date, self.cfg.date_window_days)
             ]
             if len(cands) == 1:  # only auto-match when unambiguous
@@ -148,9 +153,9 @@ class Matcher:
             ref = normalize_ref(e.reference)
             if not ref:
                 continue
-            groups.setdefault((ref, money(e.amount)), []).append(e)
+            groups.setdefault((ref, money(e.amount), (e.currency or "USD").upper()), []).append(e)
 
-        for (ref, amount), entries in groups.items():
+        for (ref, amount, currency), entries in groups.items():
             if len(entries) < 2:
                 continue
             entries = sorted(entries, key=lambda e: (e.date, e.entry_id))
@@ -158,6 +163,7 @@ class Matcher:
                 t
                 for t in self.unmatched_bank.values()
                 if money(t.amount) == amount
+                and (t.currency or "USD").upper() == currency
                 and self._within(t.date, entries[0].date, self.cfg.date_window_days)
                 and (ref in normalize_ref(t.description) or ref in normalize_ref(t.reference))
             ]
@@ -206,6 +212,7 @@ class Matcher:
                 for r in want
                 for e in by_ref.get(r, [])
                 if e.entry_id in self.unmatched_ledger
+                and self._same_currency(txn, e)
                 and self._within(txn.date, e.date, self.cfg.date_window_days)
                 and (
                     self._amount_eq(txn.amount, e.amount)
@@ -263,6 +270,7 @@ class Matcher:
                 e
                 for e in self.unmatched_ledger.values()
                 if self._within(txn.date, e.date, self.cfg.date_window_days)
+                and self._same_currency(txn, e)
                 and (txn.amount > 0) == (e.amount > 0)
             ]
             groups: list[tuple[str, list[LedgerEntry]]] = []
@@ -350,13 +358,25 @@ class Matcher:
 
         # --- triples ---
         if self.cfg.max_split_lines >= 3:
+            triple_solutions: list[list[LedgerEntry]] = []
             for i, (c1, e1) in enumerate(items):
                 for c2, e2 in items[i + 1 :]:
                     need = target_c - c1 - c2
                     for e3 in by_c.get(need, []):
                         if e3.entry_id in {e1.entry_id, e2.entry_id}:
                             continue
-                        return [e1, e2, e3]
+                        key = {e1.entry_id, e2.entry_id, e3.entry_id}
+                        if any(key == {x.entry_id for x in sol} for sol in triple_solutions):
+                            continue
+                        triple_solutions.append([e1, e2, e3])
+                        if len(triple_solutions) > 1:
+                            self.ambiguous.append(
+                                {"target": target_c / 100, "reason": "multiple exact line sets",
+                                 "sets": [[x.entry_id for x in sol] for sol in triple_solutions]}
+                            )
+                            return None
+            if triple_solutions:
+                return triple_solutions[0]
 
         # --- 4+ lines: pruned DFS ---
         if self.cfg.max_split_lines < 4:
@@ -426,17 +446,20 @@ class Matcher:
         if not deposits:
             return 0
 
-        by_date: dict[str, list[LedgerEntry]] = {}
+        by_date: dict[tuple[str, str], list[LedgerEntry]] = {}
         for e in self.unmatched_ledger.values():
-            by_date.setdefault(e.date.isoformat(), []).append(e)
+            key = (e.date.isoformat(), (e.currency or "USD").upper())
+            by_date.setdefault(key, []).append(e)
 
-        for day, lines in by_date.items():
+        for (day, currency), lines in by_date.items():
             pool = sorted(lines, key=lambda e: e.entry_id)[: self.cfg.max_split_candidates]
             if len(pool) < 3:
                 continue
             here = [
                 t for t in deposits
-                if t.txn_id in self.unmatched_bank and self._within(t.date, lines[0].date, self.cfg.date_window_days)
+                if t.txn_id in self.unmatched_bank
+                and (t.currency or "USD").upper() == currency
+                and self._within(t.date, lines[0].date, self.cfg.date_window_days)
             ]
             if not here:
                 continue

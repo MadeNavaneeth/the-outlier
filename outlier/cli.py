@@ -1,11 +1,12 @@
 """Command line interface.
 
-    python3 -m closeloop generate --out sample
-    python3 -m closeloop run --bank ... --ledger ... --truth ...
-    python3 -m closeloop review --run RUN-ID            # simulated reviewer
-    python3 -m closeloop improve --rounds 3             # the money slide
-    python3 -m closeloop serve --port 8000              # review desk UI
-    python3 -m closeloop report / audit / tools / policy
+    python3 -m outlier generate --out sample
+    python3 -m outlier run --bank ... --ledger ... --truth ...
+    python3 -m outlier review --run RUN-ID            # simulated reviewer
+    python3 -m outlier improve --rounds 3             # the money slide
+    python3 -m outlier serve --port 8000              # review desk UI
+  python3 -m outlier ask --question "..."           # ask a configured model directly
+    python3 -m outlier report / audit / learning / tools / policy
 """
 
 from __future__ import annotations
@@ -19,7 +20,7 @@ from typing import Any
 from .config import Policy
 from .eval import Evaluator, improvement_table, load_truth
 from .ledger import Ledger, chart_of_accounts
-from .llm import get_provider
+from .llm import MockProvider, get_provider
 from .matcher import MatcherConfig
 from .agents.orchestrator import Orchestrator
 from .agents.tools import build_tools
@@ -28,6 +29,7 @@ from .reviewer import SimulatedReviewer
 from .store import Store
 from .synthetic import GeneratorConfig, write_dataset
 from .ingest import load_bank, load_ledger
+from .learning import build_learning_summary
 
 
 # ----------------------------------------------------------------------
@@ -64,6 +66,20 @@ def _print_metric_block(ev: dict[str, Any]) -> None:
     width = max(len(k) for k, _ in rows)
     for k, v in rows:
         print(f"  {k.ljust(width)} : {v}")
+
+
+def _persist_evaluation(store: Store, run_id: str, evaluation: dict[str, Any]) -> dict[str, Any] | None:
+    """Keep the learning-relevant evaluation fields with the persisted run."""
+    fields = (
+        "classification_precision",
+        "false_auto_posts",
+        "auto_resolve_rate",
+        "rule_hit_rate",
+        "needs_review",
+        "rules_in_memory",
+        "llm_total_tokens",
+    )
+    return store.update_run_metrics(run_id, {key: evaluation[key] for key in fields if key in evaluation})
 
 
 # ----------------------------------------------------------------------
@@ -105,8 +121,12 @@ def cmd_run(args: argparse.Namespace) -> int:
     ev = None
     if args.truth and Path(args.truth).exists():
         ev = Evaluator(load_truth(args.truth)).evaluate(run)
+        persisted = _persist_evaluation(store, result.run_id, ev)
+        if persisted is not None:
+            run = persisted
 
-    paths = write_run_artifacts(run, args.reports, ev, audit)
+    paths = write_run_artifacts(run, args.reports, ev, audit,
+                                build_learning_summary(store.all_runs(), store.all_rules()))
     print(f"run {result.run_id}  round {result.round_no}  provider={provider.name}/{provider.model}")
     m = run["metrics"]
     print(f"  bank rows {m['bank_rows']}  ledger rows {m['ledger_rows']}")
@@ -125,7 +145,7 @@ def cmd_review(args: argparse.Namespace) -> int:
     store = _store(args)
     run = store.get_run(args.run) or store.latest_run()
     if not run:
-        print("no run found; run `python3 -m closeloop run` first", file=sys.stderr)
+        print("no run found; run `python3 -m outlier run` first", file=sys.stderr)
         return 1
     truth_path = args.truth
     if not truth_path:
@@ -149,6 +169,7 @@ def cmd_post(args: argparse.Namespace) -> int:
     ledger = Ledger.load(Path(args.db).parent / "ledger.json")
     decisions = store.decisions(run["run_id"])
     posted = 0
+    skipped = 0
     for exc in run["exceptions"]:
         d = decisions.get(exc["exception_id"])
         if not d or d["status"] in {"REJECTED"}:
@@ -167,11 +188,18 @@ def cmd_post(args: argparse.Namespace) -> int:
             account_code=prop.get("account_code", ""),
             source="human:simulated",
         )
+        existing = ledger.find_by_proposal(pe.proposal_id)
+        if existing is not None:
+            skipped += 1
+            store.audit(run["run_id"], "guardrail", "post_skipped_duplicate", "proposal",
+                        pe.proposal_id, existing_je=existing["je_id"])
+            continue
         je = ledger.post(pe, run["run_id"], actor="human:simulated")
         posted += 1
         store.audit(run["run_id"], "human:simulated", "posted_je", "journal_entry", je["je_id"],
                     proposal=pe.proposal_id, amount=pe.amount)
-    print(f"posted {posted} journal entries; GL now has {ledger.count()} entries, "
+    print(f"posted {posted} journal entries; skipped {skipped} already-posted entries; "
+          f"GL now has {ledger.count()} entries, "
           f"1000 balance {ledger.balance('1000'):,.2f}")
     return 0
 
@@ -198,7 +226,11 @@ def cmd_improve(args: argparse.Namespace) -> int:
         run = orch.run(args.bank, args.ledger, run_id=f"RUN-R{rnd}", round_no=rnd).to_dict()
         audit = store.audit_trail_json(run["run_id"])
         ev = evaluator.evaluate(run)
-        paths = write_run_artifacts(run, args.reports, ev, audit)
+        persisted = _persist_evaluation(store, run["run_id"], ev)
+        if persisted is not None:
+            run = persisted
+        paths = write_run_artifacts(run, args.reports, ev, audit,
+                                    build_learning_summary(store.all_runs(), store.all_rules()))
         reports.append(paths["report"])
         rows.append(ev)
         print(f"round {rnd}: recognised {ev['rule_hit_rate'] * 100:5.1f}%  "
@@ -227,7 +259,8 @@ def cmd_report(args: argparse.Namespace) -> int:
         return 1
     audit = store.audit_trail_json(run["run_id"])
     ev = Evaluator(load_truth(args.truth)).evaluate(run) if args.truth and Path(args.truth).exists() else None
-    paths = write_run_artifacts(run, args.reports, ev, audit)
+    paths = write_run_artifacts(run, args.reports, ev, audit,
+                                build_learning_summary(store.all_runs(), store.all_rules()))
     print(paths["report"].read_text())
     return 0
 
@@ -239,6 +272,40 @@ def cmd_audit(args: argparse.Namespace) -> int:
         print(f"{e.seq:>5}  {e.ts}  {e.actor:<26} {e.action:<20} {e.entity_type:<14} {e.entity_id}")
         if args.verbose and e.detail:
             print(f"       {json.dumps(e.detail, default=str)[:160]}")
+    return 0
+
+
+def cmd_learning(args: argparse.Namespace) -> int:
+    """Print the persisted, read-only learning-loop summary."""
+    store = _store(args)
+    summary = build_learning_summary(store.all_runs(), store.all_rules())
+    if args.format == "json":
+        print(json.dumps(summary, indent=2, default=str))
+        return 0
+
+    if not summary["has_runs"]:
+        print("no recorded runs; run `python3 -m outlier improve` first")
+        return 0
+
+    print(f"learning rounds: {summary['run_count']}  "
+          f"baseline={summary['baseline_run_id']}  latest={summary['latest_run_id']}")
+    for row in summary["rounds"]:
+        accuracy = (
+            f"{row['classification_accuracy'] * 100:5.1f}%"
+            if row["classification_accuracy"] is not None else "  n/a"
+        )
+        print(f"  round {row['round_no']}: recognition {row['recognition_rate'] * 100:5.1f}%  "
+              f"auto-resolved {row['auto_resolve_rate'] * 100:5.1f}%  "
+              f"queue {row['needs_review']:3d}  accuracy {accuracy}  "
+              f"rules {row['rules_in_memory']:3d}  tokens {row['llm_total_tokens']:7d}")
+    controls = summary["controls"]
+    print(f"  memory rules: {summary['memory']['rules']}  "
+          f"false auto-posts: {controls['false_auto_posts']}  "
+          f"accuracy non-regressed: {controls['accuracy_non_regressed']}  "
+          f"auto-post enabled: {controls['auto_post_enabled']}")
+    for reflection in summary["reflections"]:
+        print(f"  {reflection['title']}: {reflection['finding']}")
+    print(f"  next step: {summary['next_step']}")
     return 0
 
 
@@ -268,18 +335,80 @@ def cmd_serve(args: argparse.Namespace) -> int:
     return serve(host=args.host, port=args.port, db=args.db, reports=args.reports)
 
 
+def cmd_ask(args: argparse.Namespace) -> int:
+    """Ask a configured live model: question in, answer out.
+
+    Examples:
+        python3 outlier.py ask --question "What is a suspense account?"
+        python3 outlier.py ask --provider explabs --model gpt-6-astra --reasoning-effort max
+        echo "Draft a memo for ..." | python3 outlier.py ask
+        python3 outlier.py ask --system "You are a CFO." --question "Explain FX variance"
+        python3 outlier.py ask --format json --question "Classify: bank fee -12.50 never booked"
+    """
+    question = (args.question or "").strip()
+    if not question and not sys.stdin.isatty():
+        question = sys.stdin.read().strip()
+    if not question:
+        try:
+            question = input("ask gpt-6-astra> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nno question given", file=sys.stderr)
+            return 1
+    if not question:
+        print("no question given; pass --question or pipe via stdin", file=sys.stderr)
+        return 1
+    provider = get_provider(args.provider)
+    if isinstance(provider, MockProvider):
+        print("mock provider cannot answer free-form questions; configure a live provider and use --provider ...",
+              file=sys.stderr)
+        return 1
+    # Per-call overrides without touching env.
+    if getattr(args, "model", None) and hasattr(provider, "model"):
+        provider.model = args.model
+    if getattr(args, "reasoning_effort", None) and hasattr(provider, "reasoning_effort"):
+        provider.reasoning_effort = args.reasoning_effort
+    system = args.system or "You are a helpful finance assistant. Answer concisely."
+    if getattr(args, "format", "text") == "json":
+        import json as _json
+
+        out = provider.complete_json(
+            system + " Reply with JSON only.",
+            question,
+            purpose="ask",
+            fallback={},
+        )
+        if not out:
+            print("ask failed: model returned no usable JSON", file=sys.stderr)
+            return 1
+        print(_json.dumps(out, indent=2, default=str))
+        if getattr(args, "verbose", False):
+            print(f"\n[provider={provider.name}/{getattr(provider, 'model', '?')} reasoning_effort="
+                  f"{getattr(provider, 'reasoning_effort', '-')}]", file=sys.stderr)
+        return 0
+    try:
+        answer = provider._raw(system, question)  # type: ignore[attr-defined]
+    except Exception as exc:
+        print(f"ask failed: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 1
+    print(answer)
+    if getattr(args, "verbose", False):
+        print(f"\n[provider={provider.name}/{getattr(provider, 'model', '?')} reasoning_effort="
+              f"{getattr(provider, 'reasoning_effort', '-')}]", file=sys.stderr)
+    return 0
+
+
 # ----------------------------------------------------------------------
 def _add_shared(sp: argparse.ArgumentParser, paths: bool = True, policy: bool = True) -> None:
     """Shared flags are registered on every subcommand.
 
     They used to live only on the top-level parser, which meant
-    ``closeloop.py improve --reports out`` failed with "unrecognized arguments"
-    unless you knew to write ``closeloop.py --reports out improve``. Nobody
+    ``outlier.py improve --reports out`` failed with "unrecognized arguments"
+    unless you knew to write ``outlier.py --reports out improve``. Nobody
     knows that, and it broke a command in our own demo script. Flags now go
     after the subcommand, which is the order everyone types.
     """
     if paths:
-        sp.add_argument("--db", default="data/closeloop.db", help="SQLite state file")
+        sp.add_argument("--db", default="data/outlier.db", help="SQLite state file")
         sp.add_argument("--reports", default="reports", help="where reports are written")
     if policy:
         sp.add_argument("--materiality", type=float, default=2500.0,
@@ -295,8 +424,12 @@ def _add_shared(sp: argparse.ArgumentParser, paths: bool = True, policy: bool = 
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="closeloop", description="Autonomous bank reconciliation + exception desk")
+    p = argparse.ArgumentParser(prog="outlier", description="Autonomous bank reconciliation + exception desk")
     sub = p.add_subparsers(dest="cmd", required=True)
+    provider_choices = [
+        "auto", "mock", "openai", "openrouter", "gemini", "anthropic", "claude",
+        "custom", "explabs", "astra",
+    ]
 
     g = sub.add_parser("generate", help="generate a synthetic month with planted anomalies")
     g.add_argument("--out", default="sample")
@@ -309,7 +442,7 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--bank", default="sample/bank_statement.csv")
     r.add_argument("--ledger", default="sample/ledger_export.csv")
     r.add_argument("--truth", default="sample/ground_truth.json")
-    r.add_argument("--provider", default="auto", choices=["auto", "mock", "openai"])
+    r.add_argument("--provider", default="auto", choices=provider_choices)
     r.add_argument("--run-id", default=None)
     r.add_argument("--round", type=int, default=1)
     r.add_argument("--no-rules", action="store_true", help="ignore learned rules (cold start)")
@@ -334,7 +467,7 @@ def build_parser() -> argparse.ArgumentParser:
     im.add_argument("--ledger", default="sample/ledger_export.csv")
     im.add_argument("--truth", default="sample/ground_truth.json")
     im.add_argument("--rounds", type=int, default=3)
-    im.add_argument("--provider", default="auto", choices=["auto", "mock", "openai"])
+    im.add_argument("--provider", default="auto", choices=provider_choices)
     im.add_argument("--seed", type=int, default=99)
     im.add_argument("--high-trust", action="store_true",
                     help="raise the auto-resolve cap to 50000 to show what the guardrail is holding back")
@@ -353,6 +486,12 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--verbose", action="store_true")
     _add_shared(a, policy=False)
     a.set_defaults(fn=cmd_audit)
+
+    le = sub.add_parser("learning", help="print the persisted learning-loop summary")
+    le.add_argument("--format", default="text", choices=["text", "json"],
+                     help="text prints a judge-friendly summary; json prints the full contract")
+    _add_shared(le, policy=False)
+    le.set_defaults(fn=cmd_learning)
 
     t = sub.add_parser("tools", help="print the agent tool schema")
     t.add_argument("--bank", default=None)
@@ -373,6 +512,18 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--port", type=int, default=8000)
     _add_shared(s, policy=False)
     s.set_defaults(fn=cmd_serve)
+
+    k = sub.add_parser("ask", help="ask a configured model directly")
+    k.add_argument("--question", default=None, help="question text; else reads stdin or prompts")
+    k.add_argument("--system", default=None, help="system prompt override")
+    k.add_argument("--provider", default="auto", choices=provider_choices)
+    k.add_argument("--model", default=None, help="override model, e.g. gpt-6-astra")
+    k.add_argument("--reasoning-effort", default=None, help="override, e.g. max")
+    k.add_argument("--format", default="text", choices=["text", "json"],
+                   help="text prints the raw answer; json parses it through the agent JSON contract")
+    k.add_argument("--verbose", action="store_true", help="print provider/model to stderr")
+    _add_shared(k, paths=False, policy=False)
+    k.set_defaults(fn=cmd_ask)
 
     return p
 

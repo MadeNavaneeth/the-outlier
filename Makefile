@@ -13,39 +13,42 @@ help:
 	@echo "make clean    - delete data/ and reports/"
 
 data:
-	$(PY) closeloop.py generate --out sample
+	$(PY) outlier.py generate --out sample
 
+# --provider mock pins the deterministic offline model so every target below is
+# reproducible even on a machine with live API keys set (otherwise `auto`
+# picks up any ambient key and hits the network).
 run: data
-	$(PY) closeloop.py run
+	$(PY) outlier.py run --provider mock
 
 demo: clean data
 	@echo "\n=== ROUND 1: cold start, no rules in memory ==="
-	$(PY) closeloop.py run --run-id RUN-COLD
+	$(PY) outlier.py run --run-id RUN-COLD --provider mock
 	@echo "\n=== reviewer works the queue (simulated) ==="
-	$(PY) closeloop.py review --run RUN-COLD
+	$(PY) outlier.py review --run RUN-COLD
 	@echo "\n=== ROUND 2: same month, with what the reviewer taught it ==="
-	$(PY) closeloop.py run --run-id RUN-WARM --round 2
+	$(PY) outlier.py run --run-id RUN-WARM --round 2 --provider mock
 	@echo "\n=== full learning curve, 4 rounds ==="
-	rm -f data/closeloop.db
-	$(PY) closeloop.py improve --rounds 4
+	rm -f data/outlier.db
+	$(PY) outlier.py improve --rounds 4 --provider mock
 	@echo "\nwrote reports/  -> open reports/IMPROVEMENT.md and the reconciliation reports"
 
 improve: data
-	$(PY) closeloop.py improve --rounds 4
+	$(PY) outlier.py improve --rounds 4 --provider mock
 
 review: data
-	$(PY) closeloop.py run --run-id RUN-DESK
-	$(PY) closeloop.py serve
+	$(PY) outlier.py run --run-id RUN-DESK --provider mock
+	$(PY) outlier.py serve
 
 serve:
-	$(PY) closeloop.py serve
+	$(PY) outlier.py serve
 
 test:
 	$(PY) -m pytest -q
 
 large:
-	$(PY) closeloop.py generate --out big --size large
-	$(PY) closeloop.py run --bank big/bank_statement.csv --ledger big/ledger_export.csv \
+	$(PY) outlier.py generate --out big --size large
+	$(PY) outlier.py run --provider mock --bank big/bank_statement.csv --ledger big/ledger_export.csv \
 	    --truth big/ground_truth.json --run-id RUN-LARGE
 
 clean:

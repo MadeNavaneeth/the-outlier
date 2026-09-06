@@ -13,20 +13,20 @@ from http.server import ThreadingHTTPServer
 
 import pytest
 
-from closeloop.agents.orchestrator import Orchestrator
-from closeloop.config import Policy
-from closeloop.llm import MockProvider
-from closeloop.store import Store
-from closeloop.web.server import Api, _handler
+from outlier.agents.orchestrator import Orchestrator
+from outlier.config import Policy
+from outlier.llm import MockProvider
+from outlier.store import Store
+from outlier.web.server import Api, _handler
 
 
 @pytest.fixture
 def server(dataset, tmp_path):
-    store = Store(tmp_path / "closeloop.db")
+    store = Store(tmp_path / "outlier.db")
     Orchestrator(MockProvider(), store, policy=Policy()).run(
         dataset / "bank_statement.csv", dataset / "ledger_export.csv", run_id="RUN-HTTP", round_no=1
     )
-    httpd = ThreadingHTTPServer(("127.0.0.1", 0), _handler(Api(tmp_path / "closeloop.db")))
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), _handler(Api(tmp_path / "outlier.db")))
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
     yield f"http://127.0.0.1:{httpd.server_address[1]}"
@@ -63,15 +63,24 @@ def test_page_serves(server):
     with urllib.request.urlopen(server + "/", timeout=10) as r:
         html = r.read().decode()
     assert r.status == 200
-    assert "CloseLoop" in html and "<script>" in html
+    assert "The Outlier" in html and "<script>" in html
+    assert "Learning lab" in html and "Close room" in html
 
 
 def test_every_endpoint_answers_on_a_worker_thread(server):
     for path in ("/api/summary", "/api/exceptions", "/api/rules", "/api/audit?limit=5",
-                 "/api/matches?review=1", "/api/coa"):
+                 "/api/matches?review=1", "/api/command-center", "/api/learning", "/api/coa"):
         status, body = get(server + path)
         assert status == 200, path
         assert "SQLite objects created in a thread" not in json.dumps(body), path
+
+
+def test_command_center_endpoint_returns_prioritized_actions(server):
+    status, body = get(server + "/api/command-center")
+    assert status == 200
+    assert body["run_id"] == "RUN-HTTP"
+    assert body["summary"]["open_actions"] > 0
+    assert body["actions"][0]["priority"] == 1
 
 
 def test_concurrent_requests_do_not_corrupt_state(server):

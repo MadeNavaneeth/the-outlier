@@ -101,12 +101,6 @@ class ExceptionAnalyst:
             "fuzzy_candidates": self.tools.call("fuzzy_match", txn_id=item.get("txn_id", ""), tol_pct=0.03)
             if item.get("txn_id")
             else [],
-            "duplicate_candidates": self.tools.call(
-                "find_duplicates",
-                entry_id=item.get("entry_id", ""),
-                amount=item.get("amount", 0.0),
-                reference=item.get("reference", ""),
-            ),
             "similar_ledger": self.tools.call("search_ledger", query=vendor or desc[:20], limit=5),
             "account_prior": infer_expense_account(desc, item.get("bank_code", "")),
         }

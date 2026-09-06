@@ -2,7 +2,7 @@
 
 A zero-dependency HTTP server (``http.server``) serving one HTML page with
 inline CSS/JS. No build step, no CDN, no node_modules -- a judge can run it
-with ``python3 closeloop.py serve`` and click through the queue.
+with ``python3 outlier.py serve`` and click through the queue.
 
 Everything the page does is a POST to ``/api/...``; the JSON APIs are also
 usable on their own, which is how the CLI's simulated reviewer and the UI stay
@@ -13,12 +13,15 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
 from ..ledger import ACCOUNT_BY_CODE, Ledger, chart_of_accounts
+from ..command_center import build_command_center
+from ..learning import build_learning_summary
 from ..models import ApprovedRule, JournalLine, ProposedEntry, next_id
 from ..store import Store
 
@@ -31,6 +34,8 @@ class Api:
     def __init__(self, db_path: str | Path):
         self.db_path = Path(db_path)
         self.store = Store(self.db_path)
+        self._post_lock = threading.Lock()
+        self._command_center_lock = threading.Lock()
 
     # ------------------------------------------------------------------
     def summary(self) -> dict[str, Any]:
@@ -105,6 +110,23 @@ class Api:
 
     def audit(self, limit: int = 80) -> list[dict[str, Any]]:
         return [e.to_dict() for e in self.store.audit_events(limit=limit)]
+
+    def command_center(self) -> dict[str, Any]:
+        run = self.store.latest_run()
+        if not run:
+            return {"has_run": False}
+        with self._command_center_lock:
+            already_audited = any(
+                event.actor == "command_center" and event.action == "generated"
+                for event in self.store.audit_events(run["run_id"], limit=100000)
+            )
+            if not already_audited:
+                self.store.audit(run["run_id"], "command_center", "generated", "run", run["run_id"],
+                                 action_count=len(run.get("exceptions", [])))
+        return build_command_center(run)
+
+    def learning(self) -> dict[str, Any]:
+        return build_learning_summary(self.store.all_runs(), self.store.all_rules())
 
     # ------------------------------------------------------------------
     def decide(self, exception_id: str, action: str, account_code: str = "", memo: str = "",
@@ -197,30 +219,39 @@ class Api:
         run = self.store.latest_run()
         if not run:
             return {"ok": False, "error": "no run loaded"}
-        ledger = Ledger.load(self.db_path.parent / "ledger.json")
-        decisions = self.store.decisions(run["run_id"])
-        posted = 0
-        for exc in run["exceptions"]:
-            d = decisions.get(exc["exception_id"])
-            if not d or d["status"] == "REJECTED" or not d.get("proposal"):
-                continue
-            p = d["proposal"]
-            pe = ProposedEntry(
-                proposal_id=p["proposal_id"],
-                exception_id=exc["exception_id"],
-                lines=[JournalLine(**l) for l in p["lines"]],
-                rationale=p.get("rationale", ""),
-                amount=p.get("amount", 0.0),
-                account_code=p.get("account_code", ""),
-                source=reviewer,
-            )
-            if not pe.balanced:
-                continue
-            je = ledger.post(pe, run["run_id"], actor=reviewer)
-            posted += 1
-            self.store.audit(run["run_id"], reviewer, "posted_je", "journal_entry", je["je_id"],
-                             proposal=pe.proposal_id, amount=pe.amount)
-        return {"ok": True, "posted": posted, "gl_entries": ledger.count(), "bank_balance": ledger.balance("1000")}
+        with self._post_lock:
+            ledger = Ledger.load(self.db_path.parent / "ledger.json")
+            decisions = self.store.decisions(run["run_id"])
+            posted = 0
+            skipped = 0
+            for exc in run["exceptions"]:
+                d = decisions.get(exc["exception_id"])
+                if not d or d["status"] == "REJECTED" or not d.get("proposal"):
+                    continue
+                p = d["proposal"]
+                pe = ProposedEntry(
+                    proposal_id=p["proposal_id"],
+                    exception_id=exc["exception_id"],
+                    lines=[JournalLine(**l) for l in p["lines"]],
+                    rationale=p.get("rationale", ""),
+                    amount=p.get("amount", 0.0),
+                    account_code=p.get("account_code", ""),
+                    source=reviewer,
+                )
+                if not pe.balanced:
+                    continue
+                existing = ledger.find_by_proposal(pe.proposal_id)
+                if existing is not None:
+                    skipped += 1
+                    self.store.audit(run["run_id"], "guardrail", "post_skipped_duplicate", "proposal",
+                                     pe.proposal_id, existing_je=existing["je_id"])
+                    continue
+                je = ledger.post(pe, run["run_id"], actor=reviewer)
+                posted += 1
+                self.store.audit(run["run_id"], reviewer, "posted_je", "journal_entry", je["je_id"],
+                                 proposal=pe.proposal_id, amount=pe.amount)
+            return {"ok": True, "posted": posted, "skipped": skipped,
+                    "gl_entries": ledger.count(), "bank_balance": ledger.balance("1000")}
 
     def coa(self) -> list[dict[str, Any]]:
         return chart_of_accounts()
@@ -229,7 +260,7 @@ class Api:
 # ----------------------------------------------------------------------
 def _handler(api: Api):
     class Handler(BaseHTTPRequestHandler):
-        server_version = "CloseLoop/1.0"
+        server_version = "Outlier/1.0"
 
         def log_message(self, fmt: str, *args: Any) -> None:  # quieter logs
             pass
@@ -262,6 +293,10 @@ def _handler(api: Api):
                     return self._json(api.rules())
                 if path == "/api/audit":
                     return self._json(api.audit(limit=int(qs.get("limit", ["80"])[0])))
+                if path == "/api/command-center":
+                    return self._json(api.command_center())
+                if path == "/api/learning":
+                    return self._json(api.learning())
                 if path == "/api/coa":
                     return self._json(api.coa())
             except Exception as exc:  # pragma: no cover
@@ -295,10 +330,10 @@ def page() -> str:
     return p.read_text(encoding="utf-8") if p.exists() else "<h1>missing static.html</h1>"
 
 
-def serve(host: str = "0.0.0.0", port: int = 8000, db: str = "data/closeloop.db", reports: str = "reports") -> int:
+def serve(host: str = "0.0.0.0", port: int = 8000, db: str = "data/outlier.db", reports: str = "reports") -> int:
     api = Api(db)
     httpd = ThreadingHTTPServer((host, port), _handler(api))
-    print(f"CloseLoop review desk on http://{host}:{port}  (db={db})")
+    print(f"The Outlier review desk on http://{host}:{port}  (db={db})")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:  # pragma: no cover

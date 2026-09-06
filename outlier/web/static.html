@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CloseLoop · Exception Desk</title>
+<title>The Outlier · Exception Desk</title>
 <style>
   :root{
     --bg:#0e1116; --panel:#161b22; --panel2:#1c232c; --line:#2a323d;
@@ -75,11 +75,21 @@
   .toolbar{display:flex;gap:8px;align-items:center;margin:10px 0 4px;flex-wrap:wrap}
   .guard{background:#12241c;border:1px solid #1c5138;border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13px}
   .guard b{color:#7ee2b8}
+  .room{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:14px 0}
+  .object{position:relative;min-height:142px;text-align:left;border-radius:14px;padding:16px;border:1px solid var(--line);background:linear-gradient(145deg,#1b2430,#12171e);box-shadow:0 8px 0 #0a0d11;transition:transform .14s,border-color .14s,box-shadow .14s}
+  .object:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 11px 0 #0a0d11}
+  .object:active{transform:translateY(2px);box-shadow:0 4px 0 #0a0d11}
+  .object .icon{font-size:27px;display:block;margin-bottom:8px}
+  .object b{display:block;font-size:15px;margin-bottom:4px}
+  .object span{color:var(--mut);font-size:12px}
+  .reflection{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0}
+  .reflection b{color:var(--acc)}
+  .delta{color:var(--info);font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 <header>
-  <h1>CloseLoop <span>·</span> autonomous bank reconciliation</h1>
+  <h1>The Outlier <span>·</span> autonomous bank reconciliation</h1>
   <div class="sub" id="sub">loading…</div>
 </header>
 <main>
@@ -91,6 +101,9 @@
     <div class="tab" data-t="matches">Matches needing sign-off</div>
     <div class="tab" data-t="rules">Learned rules</div>
     <div class="tab" data-t="audit">Audit trail</div>
+    <div class="tab" data-t="command">Command center</div>
+    <div class="tab" data-t="learning">Learning lab</div>
+    <div class="tab" data-t="room">Close room</div>
   </div>
   <div class="toolbar">
     <button id="post">Post approved entries to the GL</button>
@@ -118,7 +131,7 @@ function kpi(v,l){ return `<div class="kpi"><div class="v">${v}</div><div class=
 
 async function loadSummary(){
   const s = await api('/api/summary');
-  if(!s.has_run){ $('#sub').textContent = 'No run loaded. Run: python3 closeloop.py run'; return; }
+  if(!s.has_run){ $('#sub').textContent = 'No run loaded. Run: python3 outlier.py run'; return; }
   const m = s.metrics, p = s.policy;
   $('#sub').innerHTML = `${s.run_id} · round ${s.round_no} · ${s.created_at} · bank <code>${esc(s.bank_file)}</code> · GL <code>${esc(s.ledger_file)}</code>`;
   $('#kpis').innerHTML =
@@ -256,7 +269,48 @@ async function renderAudit(){
   ).join('\n'))));
 }
 
-const VIEWS = {queue:renderQueue, auto:renderAuto, matches:renderMatches, rules:renderRules, audit:renderAudit};
+async function renderCommand(){
+  const v=$('#view'); v.innerHTML='';
+  const c=await api('/api/command-center');
+  if(!c.run_id){ v.appendChild(el('div','note','No run loaded.')); return; }
+  const s=c.summary;
+  v.appendChild(el('div','note', `${s.open_actions} open action(s) · ${s.critical} critical · ${s.high} high · ${money(s.amount_at_risk)} represented by open exceptions · as of ${c.as_of}`));
+  const t=el('table'); t.innerHTML='<thead><tr><th>Priority</th><th>Severity</th><th>Owner</th><th>Due</th><th>Exception</th><th style="text-align:right">Score</th><th>Recommendation</th></tr></thead><tbody></tbody>';
+  c.actions.filter(a=>a.status==='open').forEach(a=>{ const tr=el('tr'); tr.innerHTML=`<td>${a.priority}</td><td><span class="pill ${a.severity==='critical'||a.severity==='high'?'fraud_suspect':''}">${esc(a.severity)}</span></td><td>${esc(a.owner_lane)}</td><td>${esc(a.suggested_due_date)}</td><td>${esc(a.exception_id)}</td><td class="n">${a.risk_score}</td><td>${esc(a.recommendation)}</td>`; t.querySelector('tbody').appendChild(tr); });
+  v.appendChild(t);
+  v.appendChild(el('div','note', `Scoring is deterministic and links to exception evidence. Posting authority is unchanged; auto-posting is ${c.controls.auto_post_enabled?'enabled':'disabled'}.`));
+}
+
+async function renderLearning(){
+  const v=$('#view'); v.innerHTML='';
+  const l=await api('/api/learning');
+  if(!l.has_runs){ v.appendChild(el('div','note','No learning history yet. Run a reconciliation first.')); return; }
+  const latest=l.rounds[l.rounds.length-1], d=l.delta;
+  v.appendChild(el('div','note', `The agent learns only from recorded human decisions. ${l.run_count} round(s) · ${l.memory.rules} rules in memory · ${l.memory.total_hits} rule hits.`));
+  const t=el('table'); t.innerHTML='<thead><tr><th>Round</th><th>Recognition</th><th>Auto-resolved</th><th>Queue</th><th>Accuracy</th><th>Tokens</th><th>Rules</th></tr></thead><tbody></tbody>';
+  l.rounds.forEach(r=>{ const tr=el('tr'); tr.innerHTML=`<td>${esc(r.round_no)} <span class="note">${esc(r.run_id)}</span></td><td>${(r.recognition_rate*100).toFixed(1)}%</td><td>${(r.auto_resolve_rate*100).toFixed(1)}%</td><td>${r.needs_review}</td><td>${(r.classification_accuracy*100).toFixed(1)}%</td><td class="n">${r.llm_total_tokens.toLocaleString()}</td><td class="n">${r.rules_in_memory}</td>`; t.querySelector('tbody').appendChild(tr); });
+  v.appendChild(t);
+  v.appendChild(el('div','note', `Change from baseline: recognition <span class="delta">${(d.recognition_rate*100).toFixed(1)} points</span> · queue <span class="delta">${d.needs_review>0?'+':''}${d.needs_review}</span> · accuracy <span class="delta">${(d.classification_accuracy*100).toFixed(1)} points</span>`));
+  l.reflections.forEach(r=>v.appendChild(el('div','reflection', `<b>${esc(r.title)}</b><br>${esc(r.finding)}<br><span class="note">${esc(r.evidence)}</span>`)));
+  v.appendChild(el('div','guard', `<b>Next controller move.</b> ${esc(l.next_step)} Auto-posting is ${l.controls.auto_post_enabled?'enabled':'disabled'} and the highest false-auto-post count is ${l.controls.false_auto_posts}.`));
+}
+
+function renderRoom(){
+  const v=$('#view'); v.innerHTML='';
+  v.appendChild(el('div','note','A tactile demo map for the close process. Tap an object to open the real workflow; the room never makes an accounting decision for you.'));
+  const room=el('div','room');
+  const objects=[
+    ['▣','Review desk','Work the human queue','queue'],
+    ['◈','Memory shelf','See what the agent learned','learning'],
+    ['▤','Control board','Open policy and priorities','command'],
+    ['◫','Reconciliation wall','Inspect deterministic matches','matches'],
+  ];
+  objects.forEach(([icon,title,desc,target])=>{ const b=el('button','object',`<span class="icon">${icon}</span><b>${title}</b><span>${desc}</span>`); b.onclick=()=>{ tab=target; document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t===target)); VIEWS[target](); }; room.appendChild(b); });
+  v.appendChild(room);
+  v.appendChild(el('div','guard','<b>Demo rule.</b> The Close room is a navigation layer over the evidence, not a game loop that rewards posting or hides review controls.'));
+}
+
+const VIEWS = {queue:renderQueue, auto:renderAuto, matches:renderMatches, rules:renderRules, audit:renderAudit, command:renderCommand, learning:renderLearning, room:renderRoom};
 async function render(){ await loadSummary(); await VIEWS[tab](); }
 
 document.querySelectorAll('.tab').forEach(t=>{
@@ -264,7 +318,7 @@ document.querySelectorAll('.tab').forEach(t=>{
                     t.classList.add('on'); tab=t.dataset.t; VIEWS[tab](); };
 });
 $('#post').onclick = async ()=>{ const r = await api('/api/post',{});
-  $('#postnote').textContent = r.ok ? `posted ${r.posted} entries · GL has ${r.gl_entries} journal entries · 1000 balance ${money(r.bank_balance)}` : r.error;
+  $('#postnote').textContent = r.ok ? `posted ${r.posted} entries · skipped ${r.skipped||0} already posted · GL has ${r.gl_entries} journal entries · 1000 balance ${money(r.bank_balance)}` : r.error;
   render(); };
 
 (async ()=>{ COA = await api('/api/coa'); await render(); })();

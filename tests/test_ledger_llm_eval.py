@@ -5,17 +5,17 @@ from pathlib import Path as pathlib_Path
 
 import pytest
 
-from closeloop.eval import Evaluator, improvement_table, load_truth
-from closeloop.ingest import load_bank, load_ledger
-from closeloop.ledger import (
+from outlier.eval import Evaluator, improvement_table, load_truth
+from outlier.ingest import load_bank, load_ledger
+from outlier.ledger import (
     ACCOUNT_BY_CODE,
     Ledger,
     bank_fee_entry,
     build_entry,
     fx_variance_entry,
 )
-from closeloop.llm import MockProvider, OpenAIProvider, _extract_json, est_tokens
-from closeloop.models import JournalLine, ProposedEntry
+from outlier.llm import MockProvider, OpenAIProvider, _extract_json, est_tokens
+from outlier.models import JournalLine, ProposedEntry
 
 
 # --------------------------------------------------------------------------
@@ -86,6 +86,11 @@ def test_extract_json_raises_on_garbage():
         _extract_json("no json here at all")
 
 
+def test_extract_json_rejects_non_object_json():
+    with pytest.raises(Exception):
+        _extract_json('["not", "an", "object"]')
+
+
 def test_provider_falls_back_and_records_the_failure():
     class Broken(OpenAIProvider):
         def __init__(self):
@@ -152,6 +157,19 @@ def test_unparseable_statement_lines_are_surfaced_not_dropped(tmp_path):
     assert len(errors) == 1 and "could not be parsed" in errors[0].description
 
 
+def test_malformed_csv_rows_are_surfaced_not_dropped(tmp_path):
+    p = tmp_path / "statement.csv"
+    p.write_text(
+        "txn_id,date,amount,description\n"
+        "B1,2026-08-01,-12.50,valid\n"
+        "B2,not-a-date,25.00,bad date\n"
+        "B3,2026-08-03,not-a-number,bad amount\n"
+    )
+    rows = load_bank(p)
+    assert [r.txn_id for r in rows] == ["B1", "B2", "B3"]
+    assert sum(r.bank_code == "PARSE_ERROR" for r in rows) == 2
+
+
 # --------------------------------------------------------------------------
 # evaluator
 # --------------------------------------------------------------------------
@@ -188,17 +206,22 @@ def test_every_raised_exception_is_scored(dataset):
     """Regression: rows carrying BOTH a pairing and an exception (FX, duplicated
     invoices) were missing from the answer key, so accuracy was computed on
     roughly half the exceptions and looked better than it was."""
-    from closeloop.agents.orchestrator import Orchestrator
-    from closeloop.config import Policy
-    from closeloop.llm import MockProvider
-    from closeloop.store import Store
+    from outlier.agents.orchestrator import Orchestrator
+    from outlier.config import Policy
+    from outlier.llm import MockProvider
+    from outlier.store import Store
     import tempfile
 
     with tempfile.TemporaryDirectory() as tmp:
         store = Store(pathlib_Path(tmp) / "s.db")
-        result = Orchestrator(MockProvider(), store, policy=Policy()).run(
-            dataset / "bank_statement.csv", dataset / "ledger_export.csv", run_id="RUN-EVAL", round_no=1
-        )
+        try:
+            result = Orchestrator(MockProvider(), store, policy=Policy()).run(
+                dataset / "bank_statement.csv", dataset / "ledger_export.csv", run_id="RUN-EVAL", round_no=1
+            )
+        finally:
+            # Windows cannot delete an open SQLite file on TemporaryDirectory
+            # cleanup; the other tests use pytest's tmp_path for the same reason.
+            store.close()
     run = result.to_dict()
     ev = Evaluator(load_truth(dataset / "ground_truth.json")).evaluate(run)
     scored = ev["classification_correct"] + ev["classification_incorrect"]

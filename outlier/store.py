@@ -223,6 +223,21 @@ class Store:
         rows = self._rows("SELECT payload FROM runs ORDER BY round_no ASC, created_at ASC")
         return [json.loads(r["payload"]) for r in rows]
 
+    def update_run_metrics(self, run_id: str, updates: dict[str, Any]) -> dict[str, Any] | None:
+        """Persist evaluator fields that are computed after reconciliation.
+
+        The reconciler can run without ground truth, so evaluation is attached
+        later by the CLI. Keeping the selected fields on the run makes the
+        learning summary identical in the CLI, browser, and report artifacts.
+        """
+        run = self.get_run(run_id)
+        if run is None:
+            return None
+        run.setdefault("metrics", {}).update(updates)
+        self._exec("UPDATE runs SET payload = ? WHERE run_id = ?",
+                   (json.dumps(run, default=str), run_id))
+        return run
+
     # ------------------------------------------------------------------
     # review decisions (so the UI survives a restart)
     # ------------------------------------------------------------------

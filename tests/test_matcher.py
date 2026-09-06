@@ -7,20 +7,20 @@ not real, everything downstream is fiction.
 import csv
 from datetime import date
 
-from closeloop.ingest import load_bank, load_ledger
-from closeloop.matcher import Matcher, normalize_ref, refs_in
-from closeloop.models import BankTxn, LedgerEntry
+from outlier.ingest import load_bank, load_ledger
+from outlier.matcher import Matcher, normalize_ref, refs_in
+from outlier.models import BankTxn, LedgerEntry
 
 
-def mk_ledger(entry_id, amount, d=date(2026, 8, 5), ref="", vendor="", desc="", status="OPEN"):
+def mk_ledger(entry_id, amount, d=date(2026, 8, 5), ref="", vendor="", desc="", status="OPEN", currency="USD"):
     return LedgerEntry(entry_id=entry_id, date=d, amount=amount, account_code="6000",
                        account_name="Software & Subscriptions", description=desc or f"{vendor} - {ref}",
-                       reference=ref, vendor=vendor, status=status)
+                       reference=ref, vendor=vendor, status=status, currency=currency)
 
 
-def mk_bank(txn_id, amount, d=date(2026, 8, 7), ref="", cp="", desc="", code=""):
+def mk_bank(txn_id, amount, d=date(2026, 8, 7), ref="", cp="", desc="", code="", currency="USD"):
     return BankTxn(txn_id=txn_id, date=d, amount=amount, description=desc or f"{cp} PAYMENT {ref}",
-                   reference=ref, counterparty=cp, bank_code=code)
+                   reference=ref, counterparty=cp, bank_code=code, currency=currency)
 
 
 def test_exact_match_is_taken_and_consumed():
@@ -47,6 +47,17 @@ def test_reference_match_requires_amount_tie_out():
     assert rep.matches[0].match_type == "fx_variance"
     assert rep.matches[0].residual == -3.0
     assert rep.matches[0].requires_review is True
+
+
+def test_currency_mismatch_is_not_a_match():
+    m = Matcher(
+        [mk_bank("B1", -100.0, ref="INV-1001", currency="USD")],
+        [mk_ledger("L1", -100.0, ref="INV-1001", vendor="Acme", currency="EUR")],
+    )
+    rep = m.run()
+    assert rep.matches == []
+    assert [t.txn_id for t in rep.unmatched_bank] == ["B1"]
+    assert [e.entry_id for e in rep.unmatched_ledger] == ["L1"]
 
 
 def test_variance_beyond_the_fx_ceiling_is_not_matched():
@@ -232,6 +243,20 @@ def test_settlement_with_two_possible_line_sets_is_refused():
     assert rep.ambiguous, "the ambiguity must be recorded, not silently dropped"
 
 
+def test_three_line_split_with_two_exact_sets_is_refused():
+    bank = [mk_bank("B1", 300.0, desc="Acme REMITTANCE", cp="Acme")]
+    ledger = [
+        mk_ledger("L1", 100.0, vendor="Acme"),
+        mk_ledger("L2", 80.0, vendor="Acme"),
+        mk_ledger("L3", 120.0, vendor="Acme"),
+        mk_ledger("L4", 140.0, vendor="Acme"),
+        mk_ledger("L5", 80.0, vendor="Acme"),
+    ]
+    rep = Matcher(bank, ledger).run()
+    assert rep.matches == []
+    assert rep.ambiguous
+
+
 def test_near_amount_pass_only_accepts_cent_drift():
     ok = Matcher([mk_bank("B1", -100.00)], [mk_ledger("L1", -100.03)]).run()
     assert ok.matches and ok.matches[0].match_type == "near_amount"
@@ -243,7 +268,7 @@ def test_no_false_matches_on_the_generated_month(dataset):
     """The headline reliability claim, measured on planted ground truth."""
     import json
 
-    from closeloop.eval import Evaluator, load_truth
+    from outlier.eval import Evaluator, load_truth
 
     bank = load_bank(dataset / "bank_statement.csv")
     ledger = load_ledger(dataset / "ledger_export.csv")

@@ -1,4 +1,4 @@
-"""CloseLoop agent package."""
+"""The Outlier agent package."""
 
 from .critic import CriticAgent
 from .exception_analyst import ExceptionAnalyst

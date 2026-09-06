@@ -154,6 +154,9 @@ class Ledger:
     def post(self, proposal: ProposedEntry, run_id: str, actor: str) -> dict[str, Any]:
         if not proposal.balanced:
             raise ValueError(f"refusing to post unbalanced proposal {proposal.proposal_id}")
+        existing = self.find_by_proposal(proposal.proposal_id)
+        if existing is not None:
+            return existing
         je = {
             "je_id": f"JE-{len(self.entries) + 1:05d}",
             "date": date.today().isoformat(),
@@ -167,6 +170,10 @@ class Ledger:
         self.entries.append(je)
         self.save()
         return je
+
+    def find_by_proposal(self, proposal_id: str) -> dict[str, Any] | None:
+        """Return an existing journal entry for a proposal, if it was posted."""
+        return next((entry for entry in self.entries if entry.get("proposal_id") == proposal_id), None)
 
     def balance(self, code: str = "1000") -> float:
         total = 0.0

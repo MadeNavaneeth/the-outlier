@@ -80,6 +80,19 @@ class Orchestrator:
         # ---------------- 1. deterministic matching --------------------
         matcher = Matcher(bank, ledger, self.matcher_cfg)
         report = matcher.run()
+        if self.policy.review_multi_line_matches:
+            for match in report.matches:
+                if match.is_multi:
+                    match.requires_review = True
+                    self.store.audit(
+                        run_id,
+                        "guardrail",
+                        "multi_line_match_requires_review",
+                        "match",
+                        match.match_id,
+                        bank=match.bank_txn_ids,
+                        ledger=match.ledger_entry_ids,
+                    )
         for m in report.matches:
             self.store.audit(run_id, "deterministic", f"match_{m.match_type}", "match", m.match_id,
                              bank=m.bank_txn_ids, ledger=m.ledger_entry_ids, confidence=m.confidence)
@@ -118,6 +131,17 @@ class Orchestrator:
             classification, proposal = analyst.analyze(txn, None, exc_id, prop_id)
             classification.pop("context", None)
             classification.pop("item", None)
+            if proposal is not None:
+                proposal.lines = fx_variance_entry(
+                    txn.amount, entry.amount, f"FX variance on {txn.reference or txn.description}"
+                )
+                proposal.amount = money(m.residual)
+                proposal.account_code = "6700"
+                proposal.rationale = (
+                    f"Bank row {txn.txn_id} ties to GL {entry.entry_id} on reference {txn.reference or 'n/a'} but settled "
+                    f"{m.residual:+.2f} away from the booked {entry.amount:.2f}. Posting the variance to 6700 FX Loss / Gain "
+                    f"clears the bank line."
+                )
             verdict = critic.review(classification, proposal, {"description": txn.description, "amount": m.residual,
                                                                "date": txn.date.isoformat(), "vendor": txn.counterparty,
                                                                "counterparty": txn.counterparty, "bank_code": "FX_VAR", "side": "bank"})
@@ -128,15 +152,6 @@ class Orchestrator:
             self.store.audit(run_id, "agent:critic", "reviewed", "exception", exc_id,
                              verdict=verdict["verdict"], issues=verdict["issues"])
             if proposal is not None:
-                # the entry must be the variance, not the gross amount
-                proposal.lines = fx_variance_entry(m.residual, entry.amount, f"FX variance on {txn.reference or txn.description}")
-                proposal.amount = money(m.residual)
-                proposal.account_code = "6700"
-                proposal.rationale = (
-                    f"Bank row {txn.txn_id} ties to GL {entry.entry_id} on reference {txn.reference or 'n/a'} but settled "
-                    f"{m.residual:+.2f} away from the booked {entry.amount:.2f}. Posting the variance to 6700 FX Loss / Gain "
-                    f"clears the bank line."
-                )
                 proposal.critic_verdict = verdict["verdict"]
                 proposal.critic_notes = verdict["issues"]
                 proposals.append(proposal)
@@ -330,10 +345,32 @@ class Orchestrator:
         if payload.get("resolution") == "journal_entry" and payload.get("lines"):
             from ..models import JournalLine
 
+            source_lines = [JournalLine(**line) for line in payload["lines"]]
+            base = max(sum(line.debit for line in source_lines), sum(line.credit for line in source_lines))
+            scale = abs(amount) / base if base else 0.0
+            lines = [
+                JournalLine(
+                    line.account_code,
+                    line.account_name,
+                    money(line.debit * scale),
+                    money(line.credit * scale),
+                    line.memo,
+                )
+                for line in source_lines
+            ]
+            target = money(abs(amount))
+            for side in ("debit", "credit"):
+                total = money(sum(getattr(line, side) for line in lines))
+                delta = money(target - total)
+                if abs(delta) > 0.0:
+                    candidates = [line for line in lines if getattr(line, side) > 0]
+                    if candidates:
+                        line = candidates[-1]
+                        setattr(line, side, money(getattr(line, side) + delta))
             prop = ProposedEntry(
                 proposal_id=prop_id,
                 exception_id=exc_id,
-                lines=[JournalLine(**l) for l in payload["lines"]],
+                lines=lines,
                 rationale=f"Auto-resolved by approved rule {rule.rule_id} (approved by {rule.created_from} "
                 f"from {rule.exception_id}).",
                 amount=amount,

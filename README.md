@@ -1,4 +1,4 @@
-# CloseLoop — autonomous bank reconciliation with a human exception desk
+# The Outlier — autonomous bank reconciliation with a human exception desk
 
 **Track 2 · Autonomous Office of the CFO** — *Syndicate by Maximor / Agent Orchestrator*
 
@@ -14,10 +14,10 @@ and produce an audit trail an auditor can follow.
 > |---|---|
 > | Auto-match rate (deterministic, no LLM) | **87.4 %** |
 > | Match precision / recall / F1 vs ground truth | **1.000 / 1.000 / 1.000** |
-> | Exception classification accuracy | **93.8 %** (macro-F1 0.981) |
+> | Exception classification accuracy | **93.5 %** (macro-F1 0.963) |
 > | Unbalanced journal entries reaching a human | **0** |
 > | **False auto-posts** | **0** |
-> | After one review pass: patterns recognised from memory | **0 % → 77.4 %** |
+> | After one review pass: patterns recognised from memory | **0 % → 74.2 %** (77.4 % at convergence) |
 > | After one review pass: resolved with no human at all | **0 % → 25.8 %** (policy-capped) |
 > | Human review queue | **31 → 23 items** |
 >
@@ -50,18 +50,58 @@ Two design decisions drive everything else:
 Zero dependencies. Python 3.11+ and the standard library, nothing to install.
 
 ```bash
-git clone <this repo> && cd closeloop
+git clone <this repo> && cd outlier
 
 make demo          # generate data -> run -> review -> run -> run -> report
 # or step by step:
-python3 closeloop.py generate --out sample
-python3 closeloop.py run                      # one reconciliation, scored vs ground truth
-python3 closeloop.py improve --rounds 3       # the learning curve
-python3 closeloop.py serve                    # the human review desk on :8000
-python3 -m pytest -q                          # 81 tests
+python3 outlier.py generate --out sample
+python3 outlier.py run --provider mock                # one reconciliation, scored vs ground truth
+python3 outlier.py improve --rounds 3 --provider mock # the learning curve
+python3 outlier.py serve                    # the human review desk on :8000
+python3 -m pytest -q                          # 120 tests
 ```
 
-`make demo` prints the improvement table and writes `reports/`.
+`make demo` prints the improvement table and writes `reports/`. The `make`
+targets are thin wrappers — on Windows use `python` instead of `python3` and
+run the step-by-step commands above (`make` itself is optional).
+
+## Close Command Center
+
+Every run also produces a controller-facing close plan in
+`reports/<RUN_ID>_command_center.json` and
+`reports/<RUN_ID>_close_brief.md`. It ranks unresolved exceptions with a
+transparent deterministic risk score, assigns an owner lane and due date, and
+links each action back to the exception evidence. The review desk exposes the
+same artifact at `GET /api/command-center` and shows it in the Command center
+tab.
+
+This is a prioritization and accountability layer, not a second posting agent:
+it makes no new classification decision, does not change the policy gate, and
+cannot enable unattended posting. The current demo remains synthetic and
+offline; production integrations and real accounting-data security controls
+are not included.
+
+## Learning Lab and Close Room
+
+The Outlier makes its learning loop inspectable instead of claiming that the agent
+"gets smarter". The review desk's **Learning lab** compares every recorded round,
+shows recognition, auto-resolution, queue size, accuracy, token usage, rule count,
+and produces deterministic reflections such as whether accuracy regressed. Every
+run also writes `reports/<RUN_ID>_learning.json`, built from persisted runs and
+approved rules. Rules are learned only from explicit human decisions, remain
+bounded by the reviewed amount, and never enable unattended posting.
+
+The **Close room** is an optional tactile demo map: tap the review desk, memory
+shelf, control board, or reconciliation wall to jump to the real queue, learning
+history, command center, or deterministic matches. It is a navigation layer over
+finance evidence, not a game that rewards posting or hides human approval.
+
+The same evidence is available without the browser:
+
+```bash
+python3 outlier.py learning
+python3 outlier.py learning --format json
+```
 
 ### Using a real model
 
@@ -72,11 +112,64 @@ TensorMux inference gateway):
 ```bash
 export OPENAI_API_KEY=sk-...
 export OPENAI_BASE_URL=https://...      # optional
-export CLOSELOOP_MODEL=gpt-4o-mini      # optional
-python3 closeloop.py run --provider openai
+export OUTLIER_MODEL=gpt-4o-mini      # optional
+python3 outlier.py run --provider openai
 ```
 
-Same prompts, same JSON schema, same guardrails — `closeloop/agents/*` never
+To use **gpt-6-astra** via the Experiential Labs gateway (same prompts, same
+JSON schema, same guardrails):
+
+```bash
+export EXPLABS_API_KEY=xpl-...
+export EXPLABS_MODEL=gpt-6-astra              # default
+export EXPLABS_REASONING_EFFORT=max           # default; low|medium|high|max
+python3 outlier.py ask --question "What is a suspense account?"
+python3 outlier.py run --provider explabs   # or --provider astra; auto also picks it up
+```
+
+Windows PowerShell:
+
+```powershell
+$env:EXPLABS_API_KEY = "xpl-..."
+python outlier.py ask --provider explabs --question "What is a suspense account?"
+python outlier.py run --provider explabs
+```
+
+The Outlier also supports native Gemini and Anthropic APIs, plus any
+OpenAI-compatible endpoint such as OpenRouter or a self-hosted model. Each
+provider uses the same analyst/critic JSON contract, fallback behavior, audit
+trail, and policy guardrails:
+
+```bash
+# Google Gemini
+export GEMINI_API_KEY=...
+export GEMINI_MODEL=gemini-2.5-flash       # optional
+python3 outlier.py run --provider gemini
+
+# Anthropic Claude
+export ANTHROPIC_API_KEY=...
+export ANTHROPIC_MODEL=claude-sonnet-4-20250514  # optional
+python3 outlier.py run --provider anthropic
+
+# OpenRouter (OpenAI-compatible)
+export OPENROUTER_API_KEY=...
+export OPENROUTER_MODEL=anthropic/claude-sonnet-4
+python3 outlier.py run --provider openrouter
+
+# Any custom OpenAI-compatible server
+export OUTLIER_CUSTOM_API_KEY=...
+export OUTLIER_CUSTOM_BASE_URL=https://your-host.example/v1
+export OUTLIER_CUSTOM_MODEL=your-model
+python3 outlier.py run --provider custom
+```
+
+Use `--provider auto` to select the first configured live provider in this
+order: Experiential Labs, Anthropic, Gemini, OpenRouter, OpenAI, custom, then
+the deterministic offline provider. For a direct smoke test, use
+`outlier.py ask --provider ... --question "..."`. API keys are read from
+environment variables and are never stored in the repository.
+
+Same prompts, same JSON schema, same guardrails — `outlier/agents/*` never
 branches on provider. Cost per run is recorded (`llm_total_tokens` in every
 report) either way.
 
@@ -162,7 +255,7 @@ never_auto_categories    fraud_suspect
 never_auto_post_accounts 2300, 6700, 2000   (suspense, FX, AP)
 ```
 
-`python3 closeloop.py policy` prints the resolved set. Every override is
+`python3 outlier.py policy` prints the resolved set. Every override is
 audit-logged with the reason:
 
 ```
@@ -171,9 +264,10 @@ guardrail  rule_category_disagreement  approved=duplicate predicted=timing
 guardrail  auto_post_blocked        allow_auto_post is disabled (default policy)
 ```
 
-`python3 closeloop.py improve --high-trust` re-runs the same month with the
-auto-resolve cap at 50,000 so you can see exactly what the guardrail is holding
-back. It is a controller's dial, not a hardcoded behaviour.
+`python3 outlier.py improve --high-trust --provider mock` re-runs the same
+month with the auto-resolve cap at 50,000 so you can see exactly what the
+guardrail is holding back. It is a controller's dial, not a hardcoded
+behaviour.
 
 ---
 
@@ -184,8 +278,8 @@ The dataset generator plants the anomalies and writes an answer key
 not asserted.
 
 ```bash
-python3 closeloop.py generate --out sample            # 127 bank / 166 GL rows
-python3 closeloop.py generate --out big --size large  # 518 bank / 644 GL rows
+python3 outlier.py generate --out sample            # 127 bank / 166 GL rows
+python3 outlier.py generate --out big --size large  # 518 bank / 644 GL rows
 ```
 
 Planted mix: clean 1:1, split remittances, processor batch settlements,
@@ -203,7 +297,7 @@ lines, unexplained debits, bank interest and reversals.
 | Unbalanced proposals | 0 | 0 |
 | **False auto-posts** | **0** | **0** |
 | Ambiguous ties refused | 0 | 0 |
-| Run time | 0.3 s | 2.2 s |
+| Run time (mock provider; varies by machine — ~0.7 s / ~10 s on this box) | ~1 s | ~10 s |
 
 The remaining 4 % of classification error on the large set is a handful of
 `fee`/`timing`/`duplicate` rows argued into a neighbouring category — precision
@@ -212,7 +306,7 @@ Nothing is silently dropped; every exception reaches the review queue.
 
 ### The learning curve
 
-`python3 closeloop.py improve --rounds 4` → `reports/IMPROVEMENT.md`
+`python3 outlier.py improve --rounds 4 --provider mock` → `reports/IMPROVEMENT.md`
 
 ```
 round 1: recognised   0.0%  auto-resolved   0.0%  queue  31  accuracy  93.5%  rules   0
@@ -234,7 +328,7 @@ Manual baseline for the same month: 31 exceptions × ~9 min of controller time
 ## The review desk
 
 ```bash
-python3 closeloop.py serve        # http://localhost:8000
+python3 outlier.py serve        # http://localhost:8000
 ```
 
 Five tabs: **Review queue** (evidence, critic verdict, drafted entry, approve /
@@ -255,7 +349,7 @@ JSON endpoints (`/api/summary`, `/api/exceptions`, `/api/decide`, `/api/post`,
 ## Repository
 
 ```
-closeloop/
+outlier/
   cli.py                  every command
   ingest.py               bank CSV / text-PDF / GL CSV -> typed rows
   synthetic.py            dataset generator + planted ground truth
@@ -274,7 +368,7 @@ closeloop/
   web/
     server.py             review-desk API (stdlib http.server)
     static.html           the UI, inline everything
-tests/                    81 tests, `python3 -m pytest -q`
+  tests/                    120 tests, `python3 -m pytest -q`
 docs/
   ARCHITECTURE.md         design + the bugs we found and fixed
   PROMPTS.md              agent prompts and tool schemas
@@ -285,13 +379,14 @@ AO_LOG.md                 AO session log (build-process evidence)
 ## Tests
 
 ```bash
-python3 -m pytest -q      # 77 passed
+python3 -m pytest -q      # 120 passed
 ```
 
 They cover the things that would be embarrassing to get wrong: an ambiguous 1:1
 is never guessed; a duplicate pass can't consume an FX line; a rule can't widen
-the cap a human reviewed; a fraud suspect can never auto-resolve; nothing posts
-unattended; every proposal balances; learning never regresses accuracy; the
+the cap a human reviewed; a fraud suspect can never auto-resolve; posting is
+idempotent; nothing posts unattended; every proposal balances; learning never
+regresses accuracy; the
 review-desk API validates the chart of accounts; unparseable statement lines are
 surfaced rather than dropped.
 

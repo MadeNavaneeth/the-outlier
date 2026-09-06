@@ -1,8 +1,8 @@
 """Guardrails and the learned-rule store."""
 
-from closeloop.config import Policy
-from closeloop.models import ApprovedRule
-from closeloop.store import Store
+from outlier.config import Policy
+from outlier.models import ApprovedRule
+from outlier.store import Store
 
 
 def rule(sig="FEE|FEE|BANK", category="fee", cap=500.0, status="human_approved"):

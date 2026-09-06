@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Any
 
 from .eval import baseline_manual_estimate, improvement_table
+from .command_center import build_command_center, command_center_markdown
+from .learning import build_learning_summary
 
 
 def _fmt_pct(x: float) -> str:
@@ -196,7 +198,8 @@ def exceptions_csv(run: dict[str, Any], path: str | Path) -> Path:
 
 
 def write_run_artifacts(run: dict[str, Any], outdir: str | Path, evaluation: dict[str, Any] | None = None,
-                        audit: list[dict[str, Any]] | None = None) -> dict[str, Path]:
+                        audit: list[dict[str, Any]] | None = None,
+                        learning: dict[str, Any] | None = None) -> dict[str, Path]:
     out = Path(outdir)
     out.mkdir(parents=True, exist_ok=True)
     rid = run["run_id"]
@@ -207,11 +210,18 @@ def write_run_artifacts(run: dict[str, Any], outdir: str | Path, evaluation: dic
         "run_json": out / f"{rid}_run.json",
         "exceptions": out / f"{rid}_exceptions.csv",
         "audit": out / f"{rid}_audit_trail.json",
+        "command_center": out / f"{rid}_command_center.json",
+        "close_brief": out / f"{rid}_close_brief.md",
+        "learning": out / f"{rid}_learning.json",
     }
     paths["report"].write_text(reconciliation_report(run, evaluation))
     paths["run_json"].write_text(json.dumps(run, indent=2, default=str))
     exceptions_csv(run, paths["exceptions"])
     paths["audit"].write_text(json.dumps(audit or [], indent=2, default=str))
+    center = build_command_center(run)
+    paths["command_center"].write_text(json.dumps(center, indent=2, default=str))
+    paths["close_brief"].write_text(command_center_markdown(center))
+    paths["learning"].write_text(json.dumps(learning or build_learning_summary([run], []), indent=2, default=str))
     if evaluation is not None:
         paths["evaluation"] = out / f"{rid}_evaluation.json"
         paths["evaluation"].write_text(json.dumps(evaluation, indent=2, default=str))
