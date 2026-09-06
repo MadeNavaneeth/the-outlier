@@ -6,6 +6,18 @@ below leaves verifiable evidence in the AO daemon (turns, branch, commits) and
 in git history once merged. One worker per task, created with New task in the
 AO desktop. Paste each prompt as-is.
 
+## ⚠️ Branch hygiene — do NOT push the local `ao/closeloop-*` branches
+
+The local branches `ao/closeloop-1/root`, `ao/closeloop-2/root` and
+`ao/closeloop-3/root` are checked out inside AO worktrees and are **stale**:
+they still point at the pre-rewrite history (`f6e34bd…`) whose descendant
+commit carried a third-party co-author trailer that was deliberately scrubbed
+from the public repo. On GitHub these three branches already point at the
+clean tip (`5c70e42`). Pushing the local ones again (`git push origin
+ao/...`) would silently restore the scrubbed history — don't. If a future AO
+worker produces commits, rebase them onto `main` and push with an explicit
+new branch name.
+
 ## Worker A — landing-page reference fix
 
 ```
